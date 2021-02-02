@@ -1,7 +1,6 @@
 <script>
-    import { matrix } from "./matrix_client";
+    import Matrix, { matrix } from "./Matrix.svelte";
     import { afterUpdate } from "svelte";
-    import {} from "os";
     export let roomId;
 
     let messages;
@@ -14,23 +13,10 @@
         messages = room.timeline;
     });
 
-    matrix.client.on(
-        "Room.timeline",
-        function (event, room, toStartOfTimeline) {
-            if (toStartOfTimeline) {
-                return; // don't print paginated results
-            }
-            if (event.getType() !== "m.room.message") {
-                return; // only print messages
-            }
-            if (room.roomId != roomId) {
-                return;
-            }
-            console.log(event);
-
-            messages = room.timeline;
-        }
-    );
+    function onMessage(message) {
+        console.log(message);
+        messages = [...messages, message.detail];
+    }
 
     function send() {
         matrix.client.sendMessage(roomId, {
@@ -39,19 +25,15 @@
         });
         input = null;
     }
-
-    function requestKey(message) {
-        console.log(message.getType(), message.getSender(), message);
-        matrix.client.requestVerification(message.getSender());
-    }
 </script>
 
+<Matrix on:message={onMessage} />
 <div>{roomId}</div>
 
 {#if messages}
     {#each messages as message}
         {#if message.isDecryptionFailure()}
-            <div on:click={requestKey(message)}>
+            <div>
                 Can't decrypt message by {message.getSender()}
             </div>
         {:else}

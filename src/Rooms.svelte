@@ -1,7 +1,7 @@
 <script>
-    import { rooms } from "./matrix_client";
+    import { rooms } from './Matrix.svelte';
 
-    export let selected;
+    export let selected = null;
 
     function select(room) {
         selected = room.roomId;

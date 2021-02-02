@@ -1,5 +1,5 @@
 <script context="module">
-    import { matrix, isLoggedIn } from "./matrix_client";
+    import Matrix, { matrix, isLoggedIn } from "./Matrix.svelte";
 
     var accessToken = localStorage.getItem("matrixAccessToken");
     var server = localStorage.getItem("matrixServer");
@@ -10,7 +10,13 @@
     async function loginWithSavedToken() {
         if (accessToken != null && server != null) {
             console.log("trying to login with token %s", accessToken);
-            if (!(await matrix.LoginWithAccessToken(server, userId, accessToken))) {
+            if (
+                !(await matrix.LoginWithAccessToken(
+                    server,
+                    userId,
+                    accessToken
+                ))
+            ) {
                 console.log("token login failed");
                 localStorage.removeItem("matrixAccessToken");
             }
