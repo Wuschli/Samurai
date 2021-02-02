@@ -1,42 +1,68 @@
 <script>
     import { matrix } from "./matrix_client";
     import { afterUpdate } from "svelte";
+    import {} from "os";
     export let roomId;
 
     let messages;
+    let input;
+    let room;
 
     afterUpdate(() => {
-        var room = matrix.client.getRoom(roomId);
+        room = matrix.client.getRoom(roomId);
         if (!room) return;
-        console.log(room.timeline);
         messages = room.timeline;
     });
 
-    // matrix.client.on("Room.timeline", function (event, room, toStartOfTimeline) {
-    //     if (toStartOfTimeline) {
-    //         return; // don't print paginated results
-    //     }
-    //     if (event.getType() !== "m.room.message") {
-    //         return; // only print messages
-    //     }
-    //     if (room.roomId != roomId) {
-    //         return;
-    //     }
+    matrix.client.on(
+        "Room.timeline",
+        function (event, room, toStartOfTimeline) {
+            if (toStartOfTimeline) {
+                return; // don't print paginated results
+            }
+            if (event.getType() !== "m.room.message") {
+                return; // only print messages
+            }
+            if (room.roomId != roomId) {
+                return;
+            }
+            console.log(event);
 
-    //     console.log(
-    //         // the room name will update with m.room.name events automatically
-    //         "(%s) %s :: %s",
-    //         room.name,
-    //         event.getSender(),
-    //         event.getContent().body
-    //     );
-    // });
+            messages = room.timeline;
+        }
+    );
+
+    function send() {
+        matrix.client.sendMessage(roomId, {
+            body: input,
+            msgtype: "m.text",
+        });
+        input = null;
+    }
+
+    function requestKey(message) {
+        console.log(message.getType(), message.getSender(), message);
+        matrix.client.requestVerification(message.getSender());
+    }
 </script>
 
 <div>{roomId}</div>
 
 {#if messages}
     {#each messages as message}
-        <div>{message.event.sender}: {message.getContent().body}</div>
+        {#if message.isDecryptionFailure()}
+            <div on:click={requestKey(message)}>
+                Can't decrypt message by {message.getSender()}
+            </div>
+        {:else}
+            <div>{message.getSender()}: {message.getContent().body}</div>
+        {/if}
     {/each}
+{/if}
+
+{#if room}
+    <form>
+        <input type="text" bind:value={input} />
+        <button on:click|preventDefault={send}>Send</button>
+    </form>
 {/if}

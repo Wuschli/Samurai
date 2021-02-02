@@ -5,7 +5,6 @@
 
     function select(room) {
         selected = room.roomId;
-        console.log(selected);
     }
 </script>
 

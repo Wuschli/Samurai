@@ -2,11 +2,19 @@
     import { matrix, isLoggedIn } from "./matrix_client";
 
     var accessToken = localStorage.getItem("matrixAccessToken");
-    var userId = localStorage.getItem("matrixUserId");
     var server = localStorage.getItem("matrixServer");
+    var userId = localStorage.getItem("matrixUserId");
 
-    if (accessToken != null && userId != null) {
-        matrix.LoginWithAccessToken(server, userId, accessToken);
+    loginWithSavedToken();
+
+    async function loginWithSavedToken() {
+        if (accessToken != null && server != null) {
+            console.log("trying to login with token %s", accessToken);
+            if (!(await matrix.LoginWithAccessToken(server, userId, accessToken))) {
+                console.log("token login failed");
+                localStorage.removeItem("matrixAccessToken");
+            }
+        }
     }
 </script>
 
@@ -25,8 +33,8 @@
         password = "";
         // console.log(accessToken);
         localStorage.setItem("matrixAccessToken", accessToken);
-        localStorage.setItem("matrixUserId", matrix.userId);
         localStorage.setItem("matrixServer", server);
+        localStorage.setItem("matrixUserId", matrix.userId);
     }
 </script>
 
