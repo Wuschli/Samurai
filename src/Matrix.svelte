@@ -149,13 +149,13 @@
 
     onMount(() => {
         matrix.client.on("event", (event) => {
-            console.log("Event incoming: %s", event.getType(), event);
+            // console.log("Event incoming: %s", event.getType(), event);
             if (event.getType() == "m.room.message") {
                 dispatch("message", event);
             }
         });
         matrix.client.on("Event.decrypted", (event) => {
-            console.log("decrypted an event of type", event.getType(), event);
+            // console.log("decrypted an event of type", event.getType(), event);
             if (event.getType() == "m.room.message") {
                 dispatch("message", event);
             }

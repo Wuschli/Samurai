@@ -14,7 +14,6 @@
     });
 
     function onMessage(message) {
-        console.log(message);
         messages = [...messages, message.detail];
     }
 
