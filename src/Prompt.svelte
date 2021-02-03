@@ -1,22 +1,36 @@
 <script>
     import * as bot from "bot-commander";
     import Autoscroll from "./Autoscroll.svelte";
+    import { matrix } from "./Matrix.svelte";
     let input;
     let output = [];
     let history = [];
     let historyIndex = -1;
 
     bot.setSend((meta, message) => print(message));
-    bot.command("list <what>").action((meta, what) => {
-        print(what);
+    bot.command("list <what>").action(async (meta, what) => {
+        switch (what) {
+            case "rooms":
+                var rooms = await matrix.client.getRooms();
+                rooms.forEach((room) => {
+                    console.log(room);
+                    print(`${room.name.padEnd(30, " ")} [${room.roomId}]`);
+                });
+                break;
+
+            default:
+                break;
+        }
     });
 
     function print(value) {
-        var split = value.split("\n");
+        console.log(value);
+        var split = value.toString().split("\n");
         output = [...output, ...split];
     }
 
     function submit() {
+        if (!input) return;
         bot.parse(input);
         if (historyIndex >= 0) {
             history.splice(historyIndex, 1);
@@ -65,25 +79,30 @@
 
 <style lang="scss">
     .container {
-        width: 50%;
+        flex: 1;
+        border: none;
+        .output {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1em;
+            .output-wrapper {
+                min-height: 100%;
+                height: fit-content;
+                justify-content: flex-end;
+                border: none;
+                > p {
+                    white-space: pre;
+                    font-family: monospace;
+                    margin: 0;
+                }
+            }
+        }
+        input {
+            font-family: monospace;
+        }
     }
     div {
         flex-direction: column;
-        // border: none;
-    }
-    p {
-        margin: 0;
-    }
-    .output {
-        flex: 1 1 auto;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 1em;
-        .output-wrapper {
-            min-height: 100%;
-            height: fit-content;
-            justify-content: flex-end;
-            border: none;
-        }
     }
 </style>

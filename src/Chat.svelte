@@ -14,16 +14,18 @@
 
     {#if roomId}
         <!-- <div class="room"> -->
-            <Room {roomId} />
+        <Room {roomId} />
         <!-- </div> -->
     {/if}
 </div>
 
 <style lang="scss">
     .container {
-        width: 50%;
-        overflow-y: scroll;
+        flex: 1;
+        overflow-y: auto;
         overflow-x: hidden;
+        border: none;
+
         -ms-overflow-style: none; /* IE and Edge */
         scrollbar-width: none; /* Firefox */
         &::-webkit-scrollbar {

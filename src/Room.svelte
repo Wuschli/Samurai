@@ -42,8 +42,12 @@
                             </li>
                         {:else}
                             <li>
-                                {message.getSender()}: {message.getContent()
-                                    .body}
+                                <span class="sender"
+                                    >{message.getSender()}:</span
+                                >
+                                <span class="message"
+                                    >{message.getContent().body}</span
+                                >
                             </li>
                         {/if}
                     {/each}
@@ -60,6 +64,7 @@
 {/if}
 
 <style lang="scss">
+    @import "./style/vars";
     .header {
         flex: 0 0 auto;
     }
@@ -83,6 +88,15 @@
                 padding: 0;
                 list-style-type: none;
                 height: fit-content;
+                > li {
+                    margin: 1.2em 0;
+                    > .sender {
+                        @include color($blue);
+                    }
+                    > .message {
+                        @include color($white);
+                    }
+                }
             }
         }
     }

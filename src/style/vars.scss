@@ -1,0 +1,10 @@
+$red:  #ef4f57;
+$blue: #4CC2F3;
+$black: black;
+$white: white;
+$yellow: #FBF500;
+
+@mixin color($color){
+    color: $color;
+    text-shadow: $color 0 0 5px;
+}
