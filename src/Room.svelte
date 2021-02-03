@@ -11,11 +11,13 @@
     afterUpdate(() => {
         room = matrix.client.getRoom(roomId);
         if (!room) return;
-        messages = room.timeline;
+        messages = room.timeline.filter(m => m.getContent().body);
     });
 
     function onMessage(message) {
-        messages = [...messages, message.detail];
+        if (message.detail.getContent().body) {
+            messages = [...messages, message.detail];
+        }
     }
 
     function send() {
@@ -42,12 +44,8 @@
                             </li>
                         {:else}
                             <li>
-                                <span class="sender"
-                                    >{message.getSender()}:</span
-                                >
-                                <span class="message"
-                                    >{message.getContent().body}</span
-                                >
+                                <span class="sender">{message.getSender()}:</span>
+                                <span class="message">{message.getContent().body}</span>
                             </li>
                         {/if}
                     {/each}
