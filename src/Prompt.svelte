@@ -6,10 +6,6 @@
     let history = [];
     let historyIndex = -1;
 
-    for (let index = 0; index < 100; index++) {
-        output = [index, ...output];
-    }
-
     bot.setSend((meta, message) => print(message));
     bot.command("list <what>").action((meta, what) => {
         print(what);
@@ -78,15 +74,16 @@
     p {
         margin: 0;
     }
-    .output-wrapper {
-        height: fit-content;
-        justify-content: flex-end;
-        border: none;
-    }
     .output {
         flex: 1 1 auto;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 1em;
+        .output-wrapper {
+            min-height: 100%;
+            height: fit-content;
+            justify-content: flex-end;
+            border: none;
+        }
     }
 </style>
