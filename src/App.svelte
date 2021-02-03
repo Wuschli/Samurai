@@ -16,6 +16,7 @@
 	}
 	:global(body) {
 		background-color: $black;
+		@include background-gradient;
 		@include color($red);
 		text-transform: uppercase;
 		// font-family: Barlow;
