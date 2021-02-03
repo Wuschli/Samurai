@@ -6,9 +6,35 @@
     let roomId;
 </script>
 
-<Login {server} />
-<Rooms bind:selected={roomId} />
+<div class="container">
+    <Login {server} />
+    <div class="rooms">
+        <Rooms bind:selected={roomId} />
+    </div>
 
-{#if roomId}
-    <Room {roomId} />
-{/if}
+    {#if roomId}
+        <!-- <div class="room"> -->
+            <Room {roomId} />
+        <!-- </div> -->
+    {/if}
+</div>
+
+<style lang="scss">
+    .container {
+        width: 50%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+        &::-webkit-scrollbar {
+            /* Chrome, Safari and Opera */
+            display: none;
+        }
+    }
+    .rooms {
+        flex-grow: 0;
+    }
+    div {
+        flex-direction: column;
+    }
+</style>

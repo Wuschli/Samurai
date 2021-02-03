@@ -1,6 +1,7 @@
 <script>
     import Matrix, { matrix } from "./Matrix.svelte";
-    import { afterUpdate } from "svelte";
+    import { afterUpdate, beforeUpdate } from "svelte";
+    import Autoscroll from "./Autoscroll.svelte";
     export let roomId;
 
     let messages;
@@ -27,23 +28,62 @@
 </script>
 
 <Matrix on:message={onMessage} />
-<div>{roomId}</div>
+<div class="header">{roomId}</div>
 
-{#if messages}
-    {#each messages as message}
-        {#if message.isDecryptionFailure()}
-            <div>
-                Can't decrypt message by {message.getSender()}
-            </div>
-        {:else}
-            <div>{message.getSender()}: {message.getContent().body}</div>
-        {/if}
-    {/each}
-{/if}
+<div class="messages">
+    <Autoscroll>
+        <div class="message-wrapper">
+            {#if messages}
+                <ol>
+                    {#each messages as message}
+                        {#if message.isDecryptionFailure()}
+                            <li>
+                                Can't decrypt message by {message.getSender()}
+                            </li>
+                        {:else}
+                            <li>
+                                {message.getSender()}: {message.getContent()
+                                    .body}
+                            </li>
+                        {/if}
+                    {/each}
+                </ol>
+            {/if}
+        </div>
+    </Autoscroll>
+</div>
 
 {#if room}
-    <form>
+    <form on:submit|preventDefault={send}>
         <input type="text" bind:value={input} />
-        <button on:click|preventDefault={send}>Send</button>
     </form>
 {/if}
+
+<style lang="scss">
+    .header {
+        flex: 0 0 auto;
+    }
+    .messages {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 1em;
+        .message-wrapper {
+            min-height: 100%;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            border: none;
+            margin: 0;
+            padding: 0;
+
+            > ol {
+                margin: 0;
+                padding: 0;
+                list-style-type: none;
+                height: fit-content;
+            }
+        }
+    }
+</style>

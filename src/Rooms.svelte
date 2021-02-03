@@ -9,7 +9,7 @@
 </script>
 
 {#each $rooms as room}
-    <div on:click={select(room)}>
+    <p on:click={select(room)}>
         {room.name}
-    </div>
+    </p>
 {/each}
