@@ -3,12 +3,11 @@
     import Room from "./Room.svelte";
     import Rooms from "./Rooms.svelte";
     import { isLoggedIn } from "./Matrix.svelte";
-    let server = "https://matrix.org";
     let roomId;
 </script>
 
 <div class="container">
-    <Login {server} />
+    <Login />
     {#if $isLoggedIn}
         <div class="rooms">
             <Rooms bind:selected={roomId} />

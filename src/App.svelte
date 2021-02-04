@@ -48,21 +48,31 @@
 	:global(input, textarea) {
 		width: 100%;
 		margin: 0;
-		@include color($red);
+		caret-color: $blue;
 		background: none;
+		@include color($red);
 		@include border($red);
 		@include text;
-		caret-color: $blue;
 	}
-	:global(textarea):focus {
-		outline: none;
-		@include color($blue);
-		@include border($blue);
+	:global(textarea) {
+		&:focus {
+			outline: none;
+			@include color($blue);
+			@include border($blue);
+		}
+		&::placeholder {
+			@include color($yellow);
+		}
 	}
-	:global(input):focus {
-		outline: none;
-		@include color($blue);
-		@include border($blue);
+	:global(input) {
+		&:focus {
+			outline: none;
+			@include color($blue);
+			@include border($blue);
+		}
+		&::placeholder {
+			@include color($yellow);
+		}
 	}
 
 	:global(button) {

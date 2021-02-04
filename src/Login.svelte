@@ -1,9 +1,9 @@
 <script context="module">
     import Matrix, { matrix, isLoggedIn } from "./Matrix.svelte";
 
-    var accessToken = localStorage.getItem("matrixAccessToken");
-    var server = localStorage.getItem("matrixServer");
-    var userId = localStorage.getItem("matrixUserId");
+    let accessToken = localStorage.getItem("matrixAccessToken");
+    let server = localStorage.getItem("matrixHomeServer");
+    let userId = localStorage.getItem("matrixUserId");
 
     loginWithSavedToken();
 
@@ -27,7 +27,7 @@
 <script>
     let password = "";
     let userId = "";
-    export let server;
+    let server = "https://matrix.org";
 
     async function login() {
         console.log("login as %s with password", userId);
@@ -38,20 +38,28 @@
         );
         password = "";
         // console.log(accessToken);
-        localStorage.setItem("matrixAccessToken", accessToken);
-        localStorage.setItem("matrixServer", server);
-        localStorage.setItem("matrixUserId", matrix.userId);
+        if (accessToken) {
+            localStorage.setItem("matrixAccessToken", accessToken);
+            localStorage.setItem("matrixHomeServer", server);
+            localStorage.setItem("matrixUserId", matrix.userId);
+        }
     }
 </script>
 
 {#if !$isLoggedIn}
-    <input type="text" bind:value={userId} />
-    <input type="password" bind:value={password} />
-    <button on:click={login}>Login</button>
+    <form on:submit|preventDefault={login}>
+        <input type="text" placeholder="User ID" bind:value={userId} />
+        <input type="password" placeholder="Password" bind:value={password} />
+        <input type="text" placeholder="HomeServer" bind:value={server} />
+        <button on:click={login}>Login</button>
+    </form>
 {/if}
 
 <style lang="scss">
     input {
         margin-bottom: 0.5em;
+    }
+    button {
+        width: 100%;
     }
 </style>
