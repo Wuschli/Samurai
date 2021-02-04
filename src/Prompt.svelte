@@ -31,6 +31,7 @@
 
     function submit() {
         if (!input) return;
+        print(">" + input);
         bot.parse(input);
         if (historyIndex >= 0) {
             history.splice(historyIndex, 1);
@@ -86,6 +87,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             padding: 1em;
+            margin-bottom: 0.5em;
             .output-wrapper {
                 min-height: 100%;
                 height: fit-content;

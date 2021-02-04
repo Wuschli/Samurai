@@ -1,6 +1,6 @@
 <script>
     import Matrix, { matrix } from "./Matrix.svelte";
-    import { afterUpdate, beforeUpdate } from "svelte";
+    import { afterUpdate } from "svelte";
     import Autoscroll from "./Autoscroll.svelte";
     export let roomId;
 
@@ -11,7 +11,7 @@
     afterUpdate(() => {
         room = matrix.client.getRoom(roomId);
         if (!room) return;
-        messages = room.timeline.filter(m => m.getContent().body);
+        messages = room.timeline.filter((m) => m.getContent().body);
     });
 
     function onMessage(message) {
@@ -44,8 +44,12 @@
                             </li>
                         {:else}
                             <li>
-                                <span class="sender">{message.getSender()}:</span>
-                                <span class="message">{message.getContent().body}</span>
+                                <span class="sender"
+                                    >{message.getSender()}:</span
+                                >
+                                <span class="message"
+                                    >{message.getContent().body}</span
+                                >
                             </li>
                         {/if}
                     {/each}

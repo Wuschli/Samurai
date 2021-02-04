@@ -49,3 +49,9 @@
     <input type="password" bind:value={password} />
     <button on:click={login}>Login</button>
 {/if}
+
+<style lang="scss">
+    input {
+        margin-bottom: 0.5em;
+    }
+</style>

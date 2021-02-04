@@ -16,3 +16,18 @@ $yellow: #FBF500;
     background: linear-gradient(to bottom,  rgba(65,32,39,1) 0%,rgba(13,19,27,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#412027', endColorstr='#0d131b',GradientType=0 ); /* IE6-9 */
 }
+
+@mixin border($color){
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px solid $color;
+    border-radius: 0;
+}
+
+@mixin text {
+    text-transform: uppercase;
+    // font-family: Barlow;
+    font-family: monospace;
+    font-size: 1em;
+}

@@ -18,10 +18,7 @@
 		background-color: $black;
 		@include background-gradient;
 		@include color($red);
-		text-transform: uppercase;
-		// font-family: Barlow;
-		font-family: monospace;
-		font-size: 1em;
+		@include text;
 		margin: 0;
 		padding: 0;
 	}
@@ -44,7 +41,7 @@
 		flex: 1 1 auto;
 		display: flex;
 		justify-content: flex-start;
-		border: 1px solid $red;
+		@include border($red);
 		padding: 0.5em;
 	}
 
@@ -53,15 +50,38 @@
 		margin: 0;
 		@include color($red);
 		background: none;
-		border: 1px solid $red;
-		border-radius: 0;
-		text-transform: uppercase;
-		// font-family: Barlow;
-		font-family: monospace;
+		@include border($red);
+		@include text;
+		caret-color: $blue;
+	}
+	:global(textarea):focus {
+		outline: none;
+		@include color($blue);
+		@include border($blue);
+	}
+	:global(input):focus {
+		outline: none;
+		@include color($blue);
+		@include border($blue);
+	}
+
+	:global(button) {
+		@include color($red);
+		@include border($red);
+		background: none;
+		@include text;
 		&:focus {
 			outline: none;
+			@include color($blue);
+			@include border($blue);
+		}
+		&:not(:disabled):active {
+			background: none;
+			@include color($yellow);
+			@include border($yellow);
 		}
 	}
+
 	:global(form) {
 		margin: 0;
 	}
