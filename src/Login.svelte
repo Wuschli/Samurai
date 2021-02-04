@@ -5,11 +5,11 @@
     let server = localStorage.getItem("matrixHomeServer");
     let userId = localStorage.getItem("matrixUserId");
 
-    loginWithSavedToken();
+    let login = loginWithSavedToken();
 
     async function loginWithSavedToken() {
         if (accessToken != null && server != null) {
-            console.log("trying to login with token %s", accessToken);
+            // console.log("trying to login with token %s", accessToken);
             if (
                 !(await matrix.LoginWithAccessToken(
                     server,
@@ -29,7 +29,7 @@
     let userId = "";
     let server = "https://matrix.org";
 
-    async function login() {
+    async function loginWithPassword() {
         console.log("login as %s with password", userId);
         const accessToken = await matrix.LoginWithPassword(
             server,
@@ -46,14 +46,20 @@
     }
 </script>
 
-{#if !$isLoggedIn}
-    <form on:submit|preventDefault={login}>
-        <input type="text" placeholder="User ID" bind:value={userId} />
-        <input type="password" placeholder="Password" bind:value={password} />
-        <input type="text" placeholder="HomeServer" bind:value={server} />
-        <button on:click={login}>Login</button>
-    </form>
-{/if}
+{#await login then _}
+    {#if !$isLoggedIn}
+        <form on:submit|preventDefault={loginWithPassword}>
+            <input type="text" placeholder="User ID" bind:value={userId} />
+            <input
+                type="password"
+                placeholder="Password"
+                bind:value={password}
+            />
+            <input type="text" placeholder="HomeServer" bind:value={server} />
+            <button>Login</button>
+        </form>
+    {/if}
+{/await}
 
 <style lang="scss">
     input {
