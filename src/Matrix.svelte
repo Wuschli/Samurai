@@ -1,9 +1,7 @@
 <script context="module">
     import { writable } from "svelte/store";
-    // import { v4 as uuidv4 } from "uuid";
 
     const sdk = matrixcs;
-    console.log(sdk.MatrixClient);
 
     export const isLoggedIn = writable(false);
     export const rooms = writable([]);
@@ -13,12 +11,6 @@
             this.client = null;
 
             this.deviceId = localStorage.getItem("matrixDeviceId");
-            // if (!this.deviceId) {
-            //     this.deviceId = uuidv4();
-            //     localStorage.setItem("matrixDeviceId", this.deviceId);
-            // }
-
-            // console.log(sdk);
 
             this.cryptoStore = new sdk.IndexedDBCryptoStore(
                 window.indexedDB,
@@ -71,6 +63,7 @@
                 await this.startClient();
                 this.accessToken = accessToken;
                 this.userId = this.client.credentials.userId;
+                console.log(this.client);
 
                 console.log("successfully signed in as %s", this.userId);
             } catch (e) {
@@ -139,6 +132,14 @@
                 event.share();
             });
             this.client.on(
+                "crypto.verification.request",
+                this.onVerificationRequest.bind(this)
+            );
+            this.client.on(
+                "crypto.verification.request.unknown",
+                this.onUnknownVerificationRequest.bind(this)
+            );
+            this.client.on(
                 "RoomMember.membership",
                 function (event, member) {
                     this.refreshRooms();
@@ -162,7 +163,7 @@
 
         onEvent(event) {
             // if (event.getType().startsWith("m.room.")) return;
-            console.log("Event incoming: %s", event.getType(), event);
+            // console.log("Event incoming: %s", event.getType(), event);
 
             switch (event.getType()) {
                 case "m.key.verification.request":
@@ -171,6 +172,36 @@
                 default:
                     break;
             }
+        }
+
+        async onVerificationRequest(data) {
+            console.log("onVerificationRequest", data);
+            if (data.pending && data.methods.length > 0 && data.canAccept) {
+                var verifier = data.beginKeyVerification(data.methods[0]);
+                console.log(verifier);
+                verifier.on("show_sas", this.onShowSAS.bind(this));
+                var toDevice = {};
+                toDevice[verifier.deviceId] = { methods: data.methods[0] };
+                this.client.sendToDevice("m.key.verification.ready", {
+                    [this.userId]: toDevice,
+                });
+                // verifier.events.forEach((event) => {
+                //     console.log(event);
+                //     this.client.sendToDevice(event, {
+                //         [this.userId]: { [verifier.deviceId]: {} },
+                //     });
+                // });
+            } else {
+                console.log("cancel verification");
+                data.cancel();
+            }
+        }
+        onUnknownVerificationRequest(userId, cancel) {
+            console.log("unknown verification request by ", userId);
+            cancel();
+        }
+        onShowSAS(e) {
+            console.log("show SAS", e);
         }
     }
 
