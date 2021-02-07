@@ -6,10 +6,10 @@
     let roomId;
 </script>
 
-<div class="container">
+<div class="container frame">
     <Login />
     {#if $isLoggedIn}
-        <div class="rooms">
+        <div class="rooms frame">
             <Rooms bind:selected={roomId} />
         </div>
     {/if}
@@ -27,6 +27,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         border: none;
+        flex-direction: column;
 
         -ms-overflow-style: none; /* IE and Edge */
         scrollbar-width: none; /* Firefox */
@@ -37,8 +38,9 @@
     }
     .rooms {
         flex-grow: 0;
-    }
-    div {
         flex-direction: column;
     }
+    // div {
+    //     flex-direction: column;
+    // }
 </style>

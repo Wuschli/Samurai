@@ -63,8 +63,8 @@
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-<div class="container">
-    <div class="output">
+<div class="container frame">
+    <div class="output frame">
         <Autoscroll>
             <div class="output-wrapper">
                 {#each output as line}
@@ -86,6 +86,7 @@
             flex: 1 1 auto;
             overflow-y: auto;
             overflow-x: hidden;
+            justify-content: flex-end;
             padding: 1em;
             margin-bottom: 0.5em;
             .output-wrapper {

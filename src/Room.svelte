@@ -30,9 +30,9 @@
 </script>
 
 <Matrix on:message={onMessage} />
-<div class="header">{roomId}</div>
+<div class="header frame">{roomId}</div>
 
-<div class="messages">
+<div class="messages frame">
     <Autoscroll>
         <div class="message-wrapper">
             {#if messages}
@@ -69,12 +69,14 @@
     @import "./style/vars";
     .header {
         flex: 0 0 auto;
+        margin: 0.5em 0;
     }
     .messages {
         flex: 1 1 auto;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 1em;
+        margin-bottom: 0.5em;
         .message-wrapper {
             min-height: 100%;
             height: fit-content;
