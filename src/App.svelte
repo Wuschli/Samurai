@@ -2,19 +2,16 @@
 	import Chat from "./Chat.svelte";
 	import Prompt from "./Prompt.svelte";
 	import GlobalStyles from "./GlobalStyles.svelte";
+	import Contacts from "./Contacts.svelte";
+	import GunChat from "./GunChat.svelte";
 </script>
 
 <main>
 	<GlobalStyles />
-	<page>
-		<Chat />
-	</page>
-	<page>
-		<Prompt />
-	</page>
-	<page>
-		<Prompt />
-	</page>
+	<Chat />
+	<Prompt />
+	<GunChat />
+	<Contacts />
 </main>
 
 <style lang="scss">
@@ -29,22 +26,5 @@
 		// width: 100%;
 		overflow-x: auto;
 		scroll-snap-type: x mandatory;
-	}
-	page {
-		flex: 1 0 100%;
-		padding: 0;
-		width: 100vw;
-		margin: 0;
-		// display: flex;
-		// flex-direction: row;
-		// justify-content: space-between;
-		height: 100%;
-		scroll-snap-align: start;
-	}
-
-	@media (min-width: 750px) {
-		page {
-			max-width: 33.33333%;
-		}
 	}
 </style>

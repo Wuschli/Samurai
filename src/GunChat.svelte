@@ -1,16 +1,16 @@
 <script>
-    import Login from "./Login.svelte";
     import Room from "./Room.svelte";
     import Rooms from "./Rooms.svelte";
-    import { isLoggedIn } from "./Matrix.svelte";
+    import { pub } from "./initGun";
     import Page from "./Page.svelte";
+    import GunLogin from "./GunLogin.svelte";
     let roomId;
 </script>
 
 <Page>
     <div class="container frame">
-        <Login />
-        {#if $isLoggedIn}
+        <GunLogin />
+        {#if $pub}
             <div class="rooms frame">
                 <Rooms bind:selected={roomId} />
             </div>

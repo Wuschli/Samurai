@@ -1,16 +1,18 @@
 <script>
-    import * as bot from "bot-commander";
     import Autoscroll from "./Autoscroll.svelte";
     import { matrix } from "./Matrix.svelte";
+    import Page from "./Page.svelte";
+
     let input;
     let output = [];
     let history = [];
     let historyIndex = -1;
 
-    bot.setSend((meta, message) => print(message));
-    bot.command("list <what>").action(async (meta, what) => {
-        switch (what) {
-            case "rooms":
+    async function parse(input) {
+        // yargs.parse(input);
+        // bot.parse(input);
+        switch (input) {
+            case "list rooms":
                 var rooms = await matrix.client.getRooms();
                 rooms.forEach((room) => {
                     // console.log(room);
@@ -21,7 +23,7 @@
             default:
                 break;
         }
-    });
+    }
 
     function print(value) {
         // console.log(value);
@@ -33,7 +35,7 @@
         if (!input) return;
         var i = input.toLowerCase();
         print(">" + i);
-        bot.parse(i);
+        parse(i);
         if (historyIndex >= 0) {
             history.splice(historyIndex, 1);
         }
@@ -64,20 +66,22 @@
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-<div class="container frame">
-    <div class="output frame">
-        <Autoscroll>
-            <div class="output-wrapper">
-                {#each output as line}
-                    <p>{line}</p>
-                {/each}
-            </div>
-        </Autoscroll>
+<Page>
+    <div class="container frame">
+        <div class="output frame">
+            <Autoscroll>
+                <div class="output-wrapper">
+                    {#each output as line}
+                        <p>{line}</p>
+                    {/each}
+                </div>
+            </Autoscroll>
+        </div>
+        <form on:submit|preventDefault={submit}>
+            <input bind:value={input} />
+        </form>
     </div>
-    <form on:submit|preventDefault={submit}>
-        <input bind:value={input} />
-    </form>
-</div>
+</Page>
 
 <style lang="scss">
     .container {

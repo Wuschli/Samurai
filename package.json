@@ -22,7 +22,7 @@
     "svelte-preprocess": "^4.6.6"
   },
   "dependencies": {
-    "bot-commander": "^1.1.2",
+    "gun": "^0.2020.520",
     "sirv-cli": "^1.0.0",
     "uuid": "^8.3.2"
   }

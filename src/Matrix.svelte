@@ -157,6 +157,7 @@
             if (state == "PREPARED") {
                 this.client.setGlobalErrorOnUnknownDevices(false);
                 this.refreshRooms();
+                this.setProfileInfo();
                 console.log(this.client);
             }
         }
@@ -202,6 +203,14 @@
         }
         onShowSAS(e) {
             console.log("show SAS", e);
+        }
+
+        async setProfileInfo() {
+            // await this.client.setProfileInfo("samurai.profile", {
+            //     id: "i am just an id",
+            // });
+            var profile = await this.client.getUser(this.userId);
+            console.log(profile);
         }
     }
 

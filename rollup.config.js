@@ -51,7 +51,6 @@ export default {
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
 		css({ output: 'bundle.css' }),
-		nodePolyfills(),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
@@ -60,12 +59,14 @@ export default {
 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
 		resolve({
 			browser: true,
-			dedupe: ['svelte']
+			dedupe: ['svelte'],
+			preferBuiltins: false
 		}),
 		commonjs({
 			requireReturnsDefault: 'auto'
 		}),
 		nodeResolve(),
+		nodePolyfills(),
 		json(),
 
 		// In dev mode, call `npm run start` once
