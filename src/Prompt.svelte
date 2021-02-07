@@ -13,7 +13,7 @@
             case "rooms":
                 var rooms = await matrix.client.getRooms();
                 rooms.forEach((room) => {
-                    console.log(room);
+                    // console.log(room);
                     print(`${room.name.padEnd(30, " ")} [${room.roomId}]`);
                 });
                 break;
@@ -24,19 +24,20 @@
     });
 
     function print(value) {
-        console.log(value);
+        // console.log(value);
         var split = value.toString().split("\n");
         output = [...output, ...split];
     }
 
     function submit() {
         if (!input) return;
-        print(">" + input);
-        bot.parse(input);
+        var i = input.toLowerCase();
+        print(">" + i);
+        bot.parse(i);
         if (historyIndex >= 0) {
             history.splice(historyIndex, 1);
         }
-        history = [input, ...history];
+        history = [i, ...history];
         historyIndex = -1;
         input = "";
     }
@@ -82,6 +83,7 @@
     .container {
         flex: 1;
         border: none;
+        height: 100%;
         .output {
             flex: 1 1 auto;
             overflow-y: auto;

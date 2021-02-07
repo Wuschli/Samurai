@@ -23,6 +23,7 @@
 
 <style lang="scss">
     .container {
+        height: 100%;
         flex: 1;
         overflow-y: auto;
         overflow-x: hidden;
