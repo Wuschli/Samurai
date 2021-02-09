@@ -1,5 +1,5 @@
 <script>
-    import { contacts } from "./gunStores";
+    // import { contacts } from "./gunStores";
     import Page from "./Page.svelte";
     // let store = {};
 
@@ -19,12 +19,12 @@
 
 <Page>
     <div class="container frame">
-        {#each Object.entries($contacts) as [key, todo]}
+        <!-- {#each Object.entries($contacts) as [key, todo]}
             <div id={key}>
                 {todo.title}
                 {todo.done ? "😺" : "😾"}
             </div>
-        {/each}
+        {/each} -->
     </div>
 </Page>
 

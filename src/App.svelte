@@ -8,7 +8,7 @@
 
 <main>
 	<GlobalStyles />
-	<Chat />
+	<!-- <Chat /> -->
 	<Prompt />
 	<GunChat />
 	<Contacts />

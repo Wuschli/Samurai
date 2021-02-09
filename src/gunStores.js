@@ -51,9 +51,9 @@ function customStore(ref, methods = {}) {
     return { ...methods, subscribe }
 }
 
-const contactsRef = gun.get("contacts")
-export const contacts = customStore(contactsRef.map(), {
-    add: text => ref.set({ text, sender: "moi", icon: "😺" }),
-    delete: key => ref.get(key).put(null)
-})
+const publicRoomsRef = gun.get("publicRooms")
+export const publicRooms = customStore(publicRoomsRef.map(), {
+    add: room => publicRoomsRef.set(room),
+    delete: key => publicRoomsRef.get(key).put(null)
+});
 

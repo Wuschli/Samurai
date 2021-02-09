@@ -1,9 +1,9 @@
 <script>
-    import Room from "./Room.svelte";
-    import Rooms from "./Rooms.svelte";
     import { pub } from "./initGun";
     import Page from "./Page.svelte";
     import GunLogin from "./GunLogin.svelte";
+    import GunRooms from "./GunRooms.svelte";
+    import GunRoom from "./GunRoom.svelte";
     let roomId;
 </script>
 
@@ -12,13 +12,13 @@
         <GunLogin />
         {#if $pub}
             <div class="rooms frame">
-                <Rooms bind:selected={roomId} />
+                <GunRooms bind:selected={roomId} />
             </div>
         {/if}
 
         {#if roomId}
             <!-- <div class="room"> -->
-            <Room {roomId} />
+            <GunRoom {roomId} />
             <!-- </div> -->
         {/if}
     </div>
