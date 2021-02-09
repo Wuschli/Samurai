@@ -1,10 +1,13 @@
 import Gun from "gun/gun";
 import 'gun/sea';
 import "gun/lib/unset"
-// import "gun/lib/open"
-// import "gun/lib/load"
-// import "gun/lib/webrtc";
-// import 'gun/lib/rindexed';
+import "gun/lib/open"
+import "gun/lib/load"
+import 'gun/lib/radix';
+import "gun/lib/webrtc";
+import 'gun/lib/rindexed';
+import 'gun/axe';
+import "gun/lib/time.js";
 import { writable } from "svelte/store";
 
 export const pub = writable(undefined);
@@ -35,3 +38,12 @@ opt.peers = ['https://quirky-superficial-flute.glitch.me/gun'];
 export const gun = Gun(opt);
 // gun.subscribe()
 gun.on('auth', ack => console.log('Authentication was successful: ', ack))
+Gun.on('opt', function (ctx) {
+    this.to.next(ctx);
+    ctx.on('hi', function (opt) {
+        console.log('HI!! PEER', new Date(), opt.pid);
+        // setTimeout(function () {
+        //     document.getElementById('pid').innerHTML = gun._.opt.pid;
+        // });
+    });
+});

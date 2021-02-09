@@ -5,18 +5,18 @@
 
     let store = {};
     let input;
+    let room;
 
     $: {
         roomId;
         // room?.off();
         if (roomId) {
             roomId, console.log(roomId);
-            var room = gun.get("publicRooms").get(roomId).get("messages");
+            room = gun.get("publicRooms/" + roomId + "/messages");
             console.log(room);
             store = {};
 
-            gun.get("publicRooms").get(roomId).get("messages").map().on((data, key, msg, eve) => {
-                // console.log(key, data);
+            room.map().on((data, key) => {
                 if (data) {
                     store[key] = data;
                 } else {
@@ -26,22 +26,26 @@
                     store = store;
                 }
             });
+            room.time((data, key, time) => {
+                gun.get(data["#"]).once((d, id) => {
+                    console.log(d.message);
+                });
+            }, 30);
         }
     }
 
     function send() {
+        if (!room || !gun.user().is) return;
         var newMessage = {
             author: gun.user().is.alias,
             body: input,
         };
         console.log("send", newMessage);
-        gun.get("publicRooms")
-            .get(roomId)
-            .get("messages")
-            .set(newMessage, (ack) => {
-                if (ack.err) console.error(ack.err);
-                else console.log("sent", newMessage);
-            });
+        // room.time(newMessage);
+        room.set(newMessage, (ack) => {
+            if (ack.err) console.error(ack.err);
+            else console.log("sent", newMessage);
+        });
         input = null;
     }
     $: messages = Object.entries(store);
