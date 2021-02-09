@@ -19,6 +19,8 @@
             console.log(ack);
             err = ack.err;
             pub.set(user.is?.pub);
+            if (err == "User is already being created or authenticated!")
+                user.leave();
         });
     }
 
@@ -26,6 +28,10 @@
         console.log("login as %s with password", alias);
         _login(alias, password);
         password = "";
+    }
+    function logout() {
+        gun.user().leave();
+        pub.set(null);
     }
     async function register() {
         console.log("register as %s with password", alias);
@@ -48,6 +54,8 @@
         <button>Login</button>
         <button on:click|preventDefault={register}>Register</button>
     </form>
+{:else}
+    <button on:click={logout}>Logout</button>
 {/if}
 {#if err}
     <p>Error: {err}</p>
