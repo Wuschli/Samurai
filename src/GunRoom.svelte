@@ -1,25 +1,21 @@
 <script>
     import { gun } from "./initGun";
-    import { afterUpdate } from "svelte";
     import Autoscroll from "./Autoscroll.svelte";
     export let roomId;
 
     let store = {};
     let input;
-    // let room;
-    let listener;
 
-    afterUpdate(() => {
-        if (listener) {
-            listener.off();
-            listener = null;
-        }
-        store = {};
+    $: {
+        roomId;
+        // room?.off();
+        if (roomId) {
+            roomId, console.log(roomId);
+            var room = gun.get("publicRooms").get(roomId).get("messages");
+            console.log(room);
+            store = {};
 
-        gun.get("publicRooms/" + roomId + "/messages")
-            .map()
-            .on((data, key, msg, eve) => {
-                listener = eve;
+            gun.get("publicRooms").get(roomId).get("messages").map().on((data, key, msg, eve) => {
                 // console.log(key, data);
                 if (data) {
                     store[key] = data;
@@ -30,19 +26,22 @@
                     store = store;
                 }
             });
-    });
-
-    // function onMessage(message) {
-    //     if (message.detail.getContent().body) {
-    //         store = [...store, message.detail];
-    //     }
-    // }
+        }
+    }
 
     function send() {
-        gun.get("publicRooms/" + roomId + "/messages").set({
+        var newMessage = {
             author: gun.user().is.alias,
             body: input,
-        });
+        };
+        console.log("send", newMessage);
+        gun.get("publicRooms")
+            .get(roomId)
+            .get("messages")
+            .set(newMessage, (ack) => {
+                if (ack.err) console.error(ack.err);
+                else console.log("sent", newMessage);
+            });
         input = null;
     }
     $: messages = Object.entries(store);

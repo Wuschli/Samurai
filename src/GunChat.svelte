@@ -17,9 +17,7 @@
         {/if}
 
         {#if roomId}
-            <!-- <div class="room"> -->
             <GunRoom {roomId} />
-            <!-- </div> -->
         {/if}
     </div>
 </Page>

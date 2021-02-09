@@ -1,11 +1,17 @@
 <script context="module">
     import { gun, pub } from "./initGun";
-    let user = gun.user().recall({ sessionStorage: true }, (ack) => {
-        if (user.is) {
-            pub.set(user.is.pub);
-        }
-        console.log("recall done", user.is);
-    });
+    let user = gun.user();
+    if (user.is) {
+        console.log(user.is);
+        pub.set(user.is.pub);
+    } else {
+        user = user.recall({ sessionStorage: true }, (ack) => {
+            if (user.is) {
+                pub.set(user.is.pub);
+            }
+            console.log("recall done", user.is);
+        });
+    }
 </script>
 
 <script>
