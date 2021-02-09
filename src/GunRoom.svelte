@@ -26,11 +26,11 @@
                     store = store;
                 }
             });
-            room.time((data, key, time) => {
-                gun.get(data["#"]).once((d, id) => {
-                    console.log(d.message);
-                });
-            }, 30);
+            // room.time((data, key, time) => {
+            //     gun.get(data["#"]).once((d, id) => {
+            //         console.log(d.message);
+            //     });
+            // }, 30);
         }
     }
 
