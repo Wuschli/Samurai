@@ -11,7 +11,7 @@
 	<GunChat />
 	<Prompt />
 	<!-- <Contacts /> -->
-	<GunUserInfo alias="wuschli" />
+	<GunUserInfo />
 </main>
 
 <style lang="scss">

@@ -11,6 +11,7 @@ import 'gun/sea';
 import { writable } from "svelte/store";
 
 export const pub = writable(undefined);
+export const localAlias = writable(undefined);
 
 // Only init GUN once!
 // Gun.chain.subscribers = []
@@ -50,6 +51,7 @@ gun.on('auth', ack => {
 function initPeerjs(id) {
     console.log('My peer ID is:', id);
     gun.user().once((user) => {
+        localAlias.set(user.alias);
         gun.get('users').get(user.alias).get('peerId').put(id);
     });
     peer.on('connection', function (conn) {

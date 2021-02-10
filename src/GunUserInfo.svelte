@@ -1,14 +1,15 @@
 <script>
     import Page from "./Page.svelte";
-    import { gun } from "./initGun";
+    import { gun, localAlias } from "./initGun";
 
-    export let alias;
+    // export let alias;
 
     let displayName;
     let peerId;
 
     $: {
-        refresh(alias);
+        // refresh(alias);
+        refresh($localAlias);
     }
     function refresh(alias) {
         if (!alias) return;
@@ -22,14 +23,16 @@
     }
 </script>
 
-<Page>
-    <div class="container frame">
-        <div class="frame">
-            <p>{displayName}</p>
-            <p>PeerId: {peerId}</p>
+{#if $localAlias}
+    <Page>
+        <div class="container frame">
+            <div class="frame">
+                <p>{displayName}</p>
+                <p>PeerId: {peerId}</p>
+            </div>
         </div>
-    </div>
-</Page>
+    </Page>
+{/if}
 
 <style lang="scss">
     .container {
