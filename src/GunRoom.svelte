@@ -1,6 +1,7 @@
 <script>
     import { gun } from "./initGun";
     import Autoscroll from "./Autoscroll.svelte";
+    import GunChatMessage from "./GunChatMessage.svelte";
     export let roomId;
 
     let store = {};
@@ -9,11 +10,11 @@
 
     $: {
         roomId;
-        // room?.off();
+        room?.off();
         if (roomId) {
-            roomId, console.log(roomId);
+            // roomId, console.log(roomId);
             room = gun.get("publicRooms/" + roomId + "/messages");
-            console.log(room);
+            // console.log(room);
             store = {};
 
             room.map().on((data, key) => {
@@ -26,11 +27,6 @@
                     store = store;
                 }
             });
-            // room.time((data, key, time) => {
-            //     gun.get(data["#"]).once((d, id) => {
-            //         console.log(d.message);
-            //     });
-            // }, 30);
         }
     }
 
@@ -41,7 +37,6 @@
             body: input,
         };
         console.log("send", newMessage);
-        // room.time(newMessage);
         room.set(newMessage, (ack) => {
             if (ack.err) console.error(ack.err);
             else console.log("sent", newMessage);
@@ -58,13 +53,8 @@
         <div class="message-wrapper">
             {#if messages}
                 <ol>
-                    {#each messages as [key, message]}
-                        <li>
-                            <span class="sender">{message.author}:</span>
-                            <span class="message">
-                                {message.body}
-                            </span>
-                        </li>
+                    {#each messages as [, message]}
+                        <GunChatMessage {message} />
                     {/each}
                 </ol>
             {/if}
@@ -73,7 +63,7 @@
 </div>
 
 <form on:submit|preventDefault={send}>
-    <input type="text" bind:value={input} />
+    <input type="text" bind:value={input} inputmode="full-width-latin" />
 </form>
 
 <style lang="scss">
@@ -103,15 +93,6 @@
                 padding: 0;
                 list-style-type: none;
                 height: fit-content;
-                > li {
-                    margin: 1.2em 0;
-                    > .sender {
-                        @include color($blue);
-                    }
-                    > .message {
-                        @include color($white);
-                    }
-                }
             }
         }
     }

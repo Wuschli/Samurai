@@ -9,7 +9,7 @@
             if (user.is) {
                 pub.set(user.is.pub);
             }
-            console.log("recall done", user.is);
+            console.log("recall done");
         });
     }
 </script>

@@ -32,18 +32,34 @@ export const pub = writable(undefined);
 // }
 
 var opt = {};
+export var peer;
 
 // opt.store = rindexedDB;
 opt.peers = ['https://quirky-superficial-flute.glitch.me/gun'];
 export const gun = Gun(opt);
 // gun.subscribe()
-gun.on('auth', ack => console.log('Authentication was successful: ', ack))
-// Gun.on('opt', function (ctx) {
-//     this.to.next(ctx);
-//     ctx.on('hi', function (opt) {
-//         console.log('HI!! PEER', new Date(), opt.pid);
-//         // setTimeout(function () {
-//         //     document.getElementById('pid').innerHTML = gun._.opt.pid;
-//         // });
-//     });
-// });
+gun.on('auth', ack => {
+    console.log('Authentication was successful: ', ack);
+
+    setTimeout(() => {
+        peer = new Peer();
+        peer.on('open', initPeerjs);
+    }, 500);
+});
+
+function initPeerjs(id) {
+    console.log('My peer ID is:', id);
+    gun.user().once((user) => {
+        gun.get('users').get(user.alias).get('peerId').put(id);
+    });
+    peer.on('connection', function (conn) {
+        // console.log('Peerjs connection opened', conn)
+        // Receive messages
+        conn.on('data', function (data) {
+            console.log('Received', data);
+        });
+
+        // Send messages
+        conn.send('Hello!');
+    });
+}

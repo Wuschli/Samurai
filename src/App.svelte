@@ -3,13 +3,15 @@
 	import GlobalStyles from "./GlobalStyles.svelte";
 	import Contacts from "./Contacts.svelte";
 	import GunChat from "./GunChat.svelte";
+	import GunUserInfo from "./GunUserInfo.svelte";
 </script>
 
 <main>
 	<GlobalStyles />
 	<GunChat />
 	<Prompt />
-	<Contacts />
+	<!-- <Contacts /> -->
+	<GunUserInfo alias="wuschli" />
 </main>
 
 <style lang="scss">
