@@ -1,5 +1,4 @@
 <script>
-	import Chat from "./Chat.svelte";
 	import Prompt from "./Prompt.svelte";
 	import GlobalStyles from "./GlobalStyles.svelte";
 	import Contacts from "./Contacts.svelte";
@@ -8,9 +7,8 @@
 
 <main>
 	<GlobalStyles />
-	<!-- <Chat /> -->
-	<Prompt />
 	<GunChat />
+	<Prompt />
 	<Contacts />
 </main>
 

@@ -1,6 +1,5 @@
 <script>
     import Autoscroll from "./Autoscroll.svelte";
-    import { matrix } from "./Matrix.svelte";
     import Page from "./Page.svelte";
 
     let input;
@@ -9,15 +8,8 @@
     let historyIndex = -1;
 
     async function parse(input) {
-        // yargs.parse(input);
-        // bot.parse(input);
         switch (input) {
             case "list rooms":
-                var rooms = await matrix.client.getRooms();
-                rooms.forEach((room) => {
-                    // console.log(room);
-                    print(`${room.name.padEnd(30, " ")} [${room.roomId}]`);
-                });
                 break;
 
             default:
