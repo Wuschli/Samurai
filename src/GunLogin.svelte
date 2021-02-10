@@ -54,9 +54,19 @@
 </script>
 
 {#if !$pub}
-    <form on:submit|preventDefault={login}>
-        <input type="text" placeholder="User ID" bind:value={alias} />
-        <input type="password" placeholder="Password" bind:value={password} />
+    <form on:submit|preventDefault={login} autocomplete="on">
+        <input
+            type="text"
+            placeholder="User ID"
+            bind:value={alias}
+            autocomplete="username"
+        />
+        <input
+            type="password"
+            placeholder="Password"
+            bind:value={password}
+            autocomplete="current-password"
+        />
         <button>Login</button>
         <button on:click|preventDefault={register}>Register</button>
     </form>
