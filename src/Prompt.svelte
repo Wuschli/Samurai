@@ -26,20 +26,20 @@
     });
 
     bot.setSend((meta, message) => print(message));
-    bot.command("call <peerId>")
-        .description("Call someone identified by their peerId")
-        .action((a, peerId) => {
+    bot.command("call <peer>")
+        .description("Call someone identified by their peer")
+        .action((a, peer) => {
             if (!_p) {
                 print("peerjs is not initialized");
                 return;
             }
-            if (peerId) {
-                print("calling " + peerId + "...");
+            if (peer) {
+                print("calling " + peer + "...");
                 navigator.mediaDevices
                     .getUserMedia({ video: false, audio: true })
                     .then((stream) => {
                         // addStream(_p.id, stream);
-                        let call = _p.call(peerId, stream);
+                        let call = _p.call(peer, stream);
                         call.on("stream", function (s) {
                             addCall(call, s);
                         });
@@ -127,7 +127,7 @@
         calls = [
             ...calls,
             {
-                peerId: call.peer,
+                peer: call.peer,
                 source: source,
                 analyser: analyser,
                 call: call,
@@ -141,7 +141,7 @@
         console.log("remove call", call, calls);
         var i = 0;
         while (i < calls.length) {
-            if (calls[i].peerId == call.peer) {
+            if (calls[i].peer == call.peer) {
                 calls[i].audio?.remove();
                 calls.splice(i, 1);
             } else {
@@ -216,12 +216,21 @@
     </div>
 </Page>
 
-{#if calls.length > 0}
+{#if calls.length > 0 || unansweredCalls.length > 0}
     <Page>
         <div class="container frame">
-            {#each calls as stream}
-                <p>{stream.peerId}</p>
-            {/each}
+            <div class="calls frame">
+                <p>Unanswered calls</p>
+                {#each unansweredCalls as call}
+                    <p>{call.peer}</p>
+                {/each}
+            </div>
+            <div class="calls frame">
+                <p>Active calls</p>
+                {#each calls as call}
+                    <p>{call.peer}</p>
+                {/each}
+            </div>
         </div>
     </Page>
 {/if}
@@ -249,6 +258,11 @@
                     margin: 0;
                 }
             }
+        }
+        > .calls {
+            padding: 1em;
+            flex: 0 1 auto;
+            margin-bottom: 0.5em;
         }
         input {
             font-family: monospace;
