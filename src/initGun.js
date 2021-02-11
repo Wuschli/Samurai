@@ -1,4 +1,4 @@
-import Gun from "gun/gun";
+import "gun/gun";
 import 'gun/sea';
 // import "gun/lib/unset"
 // import "gun/lib/open"
@@ -33,7 +33,8 @@ export const localAlias = writable(undefined);
 // }
 
 var opt = {};
-export var peer;
+export const peer = writable(undefined);
+let p;
 
 // opt.store = rindexedDB;
 opt.peers = ['https://quirky-superficial-flute.glitch.me/gun'];
@@ -42,10 +43,9 @@ export const gun = Gun(opt);
 gun.on('auth', ack => {
     console.log('Authentication was successful: ', ack);
 
-    setTimeout(() => {
-        peer = new Peer();
-        peer.on('open', initPeerjs);
-    }, 500);
+    p = new Peer();
+    p.on('open', initPeerjs);
+    peer.set(p);
 });
 
 function initPeerjs(id) {
@@ -54,7 +54,7 @@ function initPeerjs(id) {
         localAlias.set(user.alias);
         gun.get('users').get(user.alias).get('peerId').put(id);
     });
-    peer.on('connection', function (conn) {
+    p.on('connection', function (conn) {
         // console.log('Peerjs connection opened', conn)
         // Receive messages
         conn.on('data', function (data) {

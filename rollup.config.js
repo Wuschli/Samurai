@@ -62,11 +62,14 @@ export default {
 			dedupe: ['svelte'],
 			preferBuiltins: false
 		}),
+		nodePolyfills(),
+		nodeResolve({
+			browser: true,
+			preferBuiltins: false
+		}),
 		commonjs({
 			requireReturnsDefault: 'auto'
 		}),
-		nodeResolve(),
-		nodePolyfills(),
 		json(),
 
 		// In dev mode, call `npm run start` once

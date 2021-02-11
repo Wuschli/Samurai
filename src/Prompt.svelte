@@ -1,26 +1,101 @@
 <script>
     import Autoscroll from "./Autoscroll.svelte";
     import Page from "./Page.svelte";
+    import bot from "bot-commander";
+    import { gun, peer } from "./initGun";
 
     let input;
     let output = [];
     let history = [];
     let historyIndex = -1;
+    let call;
+    let _p;
+    let streams = [];
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioContext = new AudioContext();
+    const audioOutput = audioContext.createMediaStreamDestination();
 
-    async function parse(input) {
-        switch (input) {
-            case "list rooms":
-                break;
+    peer.subscribe((p) => {
+        console.log("peerjs changed", p);
+        if (!p) return;
+        _p = p;
+        _p.on("call", function (c) {
+            // console.log(c);
+            print("incoming call from " + c.peer);
+            call = c;
+        });
+    });
 
-            default:
-                break;
-        }
+    bot.setSend((meta, message) => print(message));
+    bot.command("call <alias>")
+        .description("Call someone identified by their alias")
+        .action((a, alias) => {
+            if (!_p) {
+                print("peerjs is not initialized");
+                return;
+            }
+            gun.get("users")
+                .get(alias)
+                .get("peerId")
+                .once((peerId, key) => {
+                    if (peerId) {
+                        print("calling " + alias + " at " + peerId + "...");
+                        navigator.mediaDevices
+                            .getUserMedia({ video: false, audio: true })
+                            .then((stream) => {
+                                call = _p.call(peerId, stream);
+                                call.on("stream", function (stream) {
+                                    addStream(call.peer, stream);
+                                });
+                            })
+                            .catch((err) => {
+                                print(err);
+                            });
+                    }
+                });
+        });
+    bot.command("hangup").action((a) => {
+        if (!call) return;
+        call.close();
+        call = null;
+        print("✔");
+    });
+
+    bot.command("answer").action(() => {
+        if (!call) return;
+        navigator.mediaDevices
+            .getUserMedia({ video: false, audio: true })
+            .then((stream) => {
+                call.answer(stream);
+                call.on("stream", function (stream) {
+                    addStream(call.peer, stream);
+                });
+                print("✔");
+            })
+            .catch((err) => {
+                print(err);
+            });
+    });
+
+    function addStream(peerId, stream) {
+        var source = audioContext.createMediaStreamSource(stream);
+        source.connect(audioContext.destination);
+        console.log(source);
+        streams = [...streams, [peerId, source]];
+        // console.log(streams);
     }
 
-    function print(value) {
-        // console.log(value);
-        var split = value.toString().split("\n");
-        output = [...output, ...split];
+    function parse(input) {
+        // console.log(input);
+        bot.parse(input);
+    }
+
+    function print(...values) {
+        // console.log(values);
+        for (const value of values) {
+            var split = value.toString().split("\n");
+            output = [...output, ...split];
+        }
     }
 
     function submit() {
@@ -74,6 +149,16 @@
         </form>
     </div>
 </Page>
+
+{#if streams.length > 0}
+    <Page>
+        <div class="container frame">
+            {#each streams as [peer, stream]}
+                <p>{peer}</p>
+            {/each}
+        </div>
+    </Page>
+{/if}
 
 <style lang="scss">
     .container {
