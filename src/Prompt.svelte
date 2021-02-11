@@ -80,7 +80,7 @@
     //             });
     //     });
     bot.command("hangup").action((a) => {
-        for (let call of calls) {
+        for (const call of calls) {
             console.log(call);
             call.call.close();
         }
@@ -93,9 +93,7 @@
         navigator.mediaDevices
             .getUserMedia({ video: false, audio: true })
             .then((stream) => {
-                // addStream(_p.id, stream);
-                for (let call of calls) {
-                    addCall(call);
+                for (const call of unansweredCalls) {
                     call.answer(stream);
                     call.on("stream", function (s) {
                         addCall(call, s);
@@ -104,6 +102,7 @@
                         removeCall(call);
                     });
                 }
+                unansweredCalls = [];
                 print("✔");
             })
             .catch((err) => {
@@ -112,6 +111,12 @@
     });
 
     function addCall(call, stream) {
+        let a = new Audio();
+        a.muted = true;
+        a.srcObject = stream;
+        a.addEventListener("canplaythrough", () => {
+            a = null;
+        });
         var source = audioContext.createMediaStreamSource(stream);
         const analyser = audioContext.createAnalyser();
 
@@ -126,6 +131,7 @@
                 source: source,
                 analyser: analyser,
                 call: call,
+                audio: a,
             },
         ];
         // console.log(streams);
@@ -136,6 +142,7 @@
         var i = 0;
         while (i < calls.length) {
             if (calls[i].peerId == call.peer) {
+                calls[i].audio?.remove();
                 calls.splice(i, 1);
             } else {
                 ++i;
