@@ -3,6 +3,9 @@ window.onload = () => {
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-             .register('./sw.js');
+      .register('./sw.js')
+      .then((registration) => {
+        setInterval(() => registration.update(), 86400)
+      });
   }
 }
