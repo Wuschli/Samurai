@@ -4,6 +4,7 @@
 	import Contacts from "./Contacts.svelte";
 	import GunChat from "./GunChat.svelte";
 	import GunUserInfo from "./GunUserInfo.svelte";
+	import ScanLines from "./ScanLines.svelte";
 </script>
 
 <main>
@@ -13,6 +14,8 @@
 	<!-- <Contacts /> -->
 	<GunUserInfo />
 </main>
+
+<ScanLines />
 
 <style lang="scss">
 	main {

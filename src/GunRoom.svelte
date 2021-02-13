@@ -35,6 +35,7 @@
         var newMessage = {
             author: gun.user().is.alias,
             body: input,
+            timestamp: Date.now()
         };
         console.log("send", newMessage);
         room.set(newMessage, (ack) => {
