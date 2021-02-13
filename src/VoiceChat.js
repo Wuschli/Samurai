@@ -79,7 +79,7 @@ class VoiceChat {
             .get("peerId")
             .once((peerId, key) => {
                 if (peerId) {
-                    print("calling " + alias + " at " + peerId + "...");
+                    this.out("calling " + alias + " at " + peerId + "...");
                     this.CallPeer(peerId);
                 }
             });
