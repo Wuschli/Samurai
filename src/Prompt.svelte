@@ -139,11 +139,6 @@
                 }
             }
         }
-        > .calls {
-            padding: 1em;
-            flex: 0 1 auto;
-            margin-bottom: 0.5em;
-        }
         input {
             font-family: monospace;
         }

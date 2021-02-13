@@ -25,17 +25,15 @@
 </script>
 
 <Page>
-    {#if $localAlias}
-        <div class="container frame">
+    <div class="container frame">
+        {#if $localAlias}
             <div class="frame">
                 <p>{displayName}</p>
                 <p>PeerId: {peerId}</p>
             </div>
-        </div>
-    {/if}
+        {/if}
 
-    {#if $calls.length > 0 || $incomingCalls.length > 0}
-        <div class="container frame">
+        {#if $calls.length > 0 || $incomingCalls.length > 0}
             <div class="calls frame">
                 <p>Incoming calls</p>
                 {#each $incomingCalls as call}
@@ -48,8 +46,8 @@
                     <p>{call.peer}</p>
                 {/each}
             </div>
-        </div>
-    {/if}
+        {/if}
+    </div>
 </Page>
 
 <style lang="scss">
@@ -60,6 +58,7 @@
         > div {
             padding: 1em;
             flex: 0 1 auto;
+            margin-bottom: 0.5em;
         }
     }
     div {
