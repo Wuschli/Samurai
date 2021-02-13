@@ -1,4 +1,4 @@
-import { getMicStream, audioContext } from './VoiceChat';
+import { getMicStream, getAudioContext } from './VoiceChat';
 
 class Call {
     constructor(peerjs, remoteId, out) {
@@ -47,7 +47,7 @@ class Call {
     async Answer(mediaConnection) {
         try {
             console.log("accept call from", this.RemoteId);
-            this.Stream = getMicStream();
+            this.Stream = await getMicStream();
             this.MediaConnection = mediaConnection;
             mediaConnection.answer(this.Stream);
         }
@@ -98,11 +98,11 @@ class Call {
         this.audio.addEventListener("canplaythrough", () => {
             this.audio = null;
         });
-        var source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
+        var source = getAudioContext().createMediaStreamSource(stream);
+        const analyser = getAudioContext().createAnalyser();
 
         source.connect(analyser);
-        analyser.connect(audioContext.destination);
+        analyser.connect(getAudioContext().destination);
     }
 }
 

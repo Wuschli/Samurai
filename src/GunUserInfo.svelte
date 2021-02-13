@@ -24,7 +24,6 @@
         });
     }
 
-    let audioContext;
     let micStream;
     let micPromise;
 
@@ -41,8 +40,8 @@
             <div class="frame">
                 <p>{displayName}</p>
                 {#if $calls.length > 0 || $incomingCalls.length > 0}
-                    {#await micPromise then _}
-                        <VolumeBar context={audioContext} stream={micStream} />
+                    {#await micPromise then stream}
+                        <VolumeBar {stream} />
                     {/await}
                 {/if}
                 <p>PeerId: {peerId}</p>

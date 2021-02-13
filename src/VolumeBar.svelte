@@ -1,8 +1,7 @@
 <script>
-    import { onMount, onDestroy } from "svelte";
+    import { getAudioContext } from "./VoiceChat";
     import SoundMeter from "./soundMeter";
 
-    export let context;
     export let stream;
     export let value = 0;
 
@@ -19,7 +18,7 @@
             meterRefresh = null;
         }
         if (stream) {
-            soundMeter = new SoundMeter(context);
+            soundMeter = new SoundMeter(getAudioContext());
             soundMeter.connectToSource(stream, function (e) {
                 if (e) {
                     console.error(e);
