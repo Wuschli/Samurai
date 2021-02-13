@@ -1,9 +1,10 @@
 <script>
-    import Page from "./Page.svelte";
+    import { onMount } from "svelte";
     import { gun, localAlias } from "./initGun";
     import { calls, incomingCalls } from "./VoiceChat";
-
-    // export let alias;
+    import Page from "./Page.svelte";
+    import ActiveCall from "./ActiveCall.svelte";
+    import VolumeBar from "./VolumeBar.svelte";
 
     let displayName;
     let peerId;
@@ -18,10 +19,29 @@
         const user = gun.get("users/" + alias.toLowerCase());
         displayName = alias;
         user.get("peerId").on((data, key) => {
-            console.log(key, data);
+            // console.log(key, data);
             peerId = data;
         });
     }
+
+    let audioContext;
+    let micStream;
+    let volumeValue;
+    onMount(async () => {
+        try {
+            audioContext = new AudioContext();
+            micStream = await navigator.mediaDevices.getUserMedia({
+                video: false,
+                audio: {
+                    echoCancellation: { exact: true },
+                    noiseSuppression: { exact: true },
+                    autoGainControl: { ideal: true },
+                },
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    });
 </script>
 
 <Page>
@@ -42,8 +62,9 @@
             </div>
             <div class="calls frame">
                 <p>Active calls</p>
+                <VolumeBar context={audioContext} stream={micStream} />
                 {#each $calls as call}
-                    <p>{call.peer}</p>
+                    <ActiveCall {call} />
                 {/each}
             </div>
         {/if}

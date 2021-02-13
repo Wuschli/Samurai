@@ -41,7 +41,7 @@ opt.peers = ['https://quirky-superficial-flute.glitch.me/gun'];
 export const gun = Gun(opt);
 // gun.subscribe()
 gun.on('auth', function (ack) {
-    console.log('Authentication was successful: ', ack);
+    console.log('Authentication was successful'/*, ack*/);
 
     p = new Peer();
     p.on('open', initPeerjs);
@@ -49,10 +49,10 @@ gun.on('auth', function (ack) {
 });
 
 function initPeerjs(id) {
-    console.log('My peer ID is:', id);
+    console.log('My peer ID is', id);
 
     gun.user().once(function (user) {
-        localAlias.set(user.alias);
+        localAlias.set(user.alias.toLowerCase());
         gun.get('users').get(user.alias.toLowerCase()).get("peerId").put(id);
     });
 
