@@ -2,33 +2,26 @@
     import Autoscroll from "./Autoscroll.svelte";
     import Page from "./Page.svelte";
     import bot from "bot-commander";
-    import { gun, peer } from "./initGun";
+    import { voice, calls, unansweredCalls } from "./VoiceChat";
 
     let input;
     let output = [];
     let history = [];
     let historyIndex = -1;
-    let _p;
-    let unansweredCalls = [];
-    let calls = [];
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioContext = new AudioContext();
 
-    peer.subscribe((p) => {
-        console.log("peerjs changed", p);
-        if (!p) return;
-        _p = p;
-        _p.on("call", function (c) {
-            // console.log(c);
-            print("incoming call from " + c.peer);
-            unansweredCalls = [...unansweredCalls, c];
-        });
-    });
-
-    bot.setSend((meta, message) => print(message));
+    voice.out = print;
+    bot.setSend((_, message) => print(message));
     bot.command("call <peer>")
         .description("Call someone identified by their peer")
-        .action(callPeer);
+        .action((_, peer) => {
+            voice.CallPeer(peer);
+        });
+    bot.command("hangup").action(() => {
+        voice.HangupCall();
+    });
+    bot.command("answer").action(() => {
+        voice.AnswerCall();
+    });
     // bot.command("call alias <alias>")
     //     .description("Call someone identified by their alias")
     //     .action((a, alias) => {
@@ -56,106 +49,6 @@
     //                 }
     //             });
     //     });
-    bot.command("hangup").action(hangupCall);
-
-    bot.command("answer").action(answerCall);
-
-    function addCall(call, stream) {
-        let a = new Audio();
-        a.muted = true;
-        a.srcObject = stream;
-        a.addEventListener("canplaythrough", () => {
-            a = null;
-        });
-        var source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-
-        console.log(source);
-        calls = [
-            ...calls,
-            {
-                peer: call.peer,
-                source: source,
-                analyser: analyser,
-                call: call,
-                audio: a,
-            },
-        ];
-        // console.log(streams);
-    }
-
-    function removeCall(call) {
-        console.log("remove call", call, calls);
-        var i = 0;
-        while (i < calls.length) {
-            if (calls[i].peer == call.peer) {
-                calls[i].audio?.remove();
-                calls.splice(i, 1);
-            } else {
-                ++i;
-            }
-        }
-        calls = calls;
-    }
-
-    function callPeer(a, peer) {
-        if (!_p) {
-            print("peerjs is not initialized");
-            return;
-        }
-        if (peer) {
-            print("calling " + peer + "...");
-            navigator.mediaDevices
-                .getUserMedia({ video: false, audio: true })
-                .then((stream) => {
-                    // addStream(_p.id, stream);
-                    let call = _p.call(peer, stream);
-                    call.on("stream", function (s) {
-                        addCall(call, s);
-                    });
-                    call.on("close", () => {
-                        removeCall(call);
-                    });
-                })
-                .catch((err) => {
-                    print(err);
-                });
-        }
-    }
-
-    function hangupCall() {
-        for (const call of calls) {
-            console.log(call);
-            call.call.close();
-        }
-        calls = [];
-        print("✔");
-    }
-
-    function answerCall() {
-        if (unansweredCalls.length == 0) return;
-        navigator.mediaDevices
-            .getUserMedia({ video: false, audio: true })
-            .then((stream) => {
-                for (const call of unansweredCalls) {
-                    call.answer(stream);
-                    call.on("stream", function (s) {
-                        addCall(call, s);
-                    });
-                    call.on("close", () => {
-                        removeCall(call);
-                    });
-                }
-                unansweredCalls = [];
-                print("✔");
-            })
-            .catch((err) => {
-                print(err);
-            });
-    }
 
     function parse(input) {
         // console.log(input);
@@ -222,18 +115,18 @@
     </div>
 </Page>
 
-{#if calls.length > 0 || unansweredCalls.length > 0}
+{#if $calls.length > 0 || $unansweredCalls.length > 0}
     <Page>
         <div class="container frame">
             <div class="calls frame">
                 <p>Unanswered calls</p>
-                {#each unansweredCalls as call}
+                {#each $unansweredCalls as call}
                     <p>{call.peer}</p>
                 {/each}
             </div>
             <div class="calls frame">
                 <p>Active calls</p>
-                {#each calls as call}
+                {#each $calls as call}
                     <p>{call.peer}</p>
                 {/each}
             </div>
