@@ -21,7 +21,7 @@
 
     function _login(alias, password) {
         let user = gun.user();
-        user.user().auth(alias, password, (ack) => {
+        user.user().auth(alias.toLowerCase(), password, (ack) => {
             console.log(ack);
             err = ack.err;
             pub.set(user.is?.pub);
@@ -42,7 +42,7 @@
     async function register() {
         console.log("register as %s with password", alias);
         let user = gun.user();
-        user.create(alias, password, (ack) => {
+        user.create(alias.toLowerCase(), password, (ack) => {
             console.log(ack);
             err = ack.err;
             if (!ack.err) {

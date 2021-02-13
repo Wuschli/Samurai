@@ -1,4 +1,4 @@
-import { peer } from "./initGun";
+import { peer, gun } from "./initGun";
 import { array } from './stores';
 
 export const calls = array([]);
@@ -69,6 +69,21 @@ class VoiceChat {
             }
         }
     }
+    CallUser(alias) {
+        if (!this._p) {
+            print("peerjs is not initialized");
+            return;
+        }
+        gun.get("users")
+            .get(alias.toLowerCase())
+            .get("peerId")
+            .once((peerId, key) => {
+                if (peerId) {
+                    print("calling " + alias + " at " + peerId + "...");
+                    this.CallPeer(peerId);
+                }
+            });
+    }
 
     HangupCall() {
         for (const call of calls) {
@@ -105,7 +120,7 @@ class VoiceChat {
 
     _handleCall(mediaConnection) {
         console.log('handle call', mediaConnection);
-        
+
         mediaConnection.on("stream", function (stream) {
             this.out(mediaConnection.peer + ' connected');
             this._addCall(mediaConnection, stream);

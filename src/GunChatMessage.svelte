@@ -9,7 +9,7 @@
         author = message.author;
         peerId = null;
         gun.get("users")
-            .get(message.author)
+            .get(message.author.toLowerCase())
             .get("peerId")
             .on((data) => {
                 peerId = data;

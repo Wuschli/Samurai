@@ -15,7 +15,7 @@
     function refresh(alias) {
         if (!alias) return;
 
-        const user = gun.get("users/" + alias);
+        const user = gun.get("users/" + alias.toLowerCase());
         displayName = alias;
         user.get("peerId").on((data, key) => {
             console.log(key, data);

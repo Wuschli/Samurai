@@ -11,7 +11,12 @@
 
     voice.out = print;
     bot.setSend((_, message) => print(message));
-    bot.command("call <peer>")
+    bot.command("call <alias>")
+        .description("Call someone identified by their alias")
+        .action((a, alias) => {
+            voice.CallUser(alias);
+        });
+    bot.command("peer-call <peer>")
         .description("Call someone identified by their peer")
         .action((_, peer) => {
             voice.CallPeer(peer);
@@ -22,33 +27,6 @@
     bot.command("answer").action(() => {
         voice.AnswerCall();
     });
-    // bot.command("call alias <alias>")
-    //     .description("Call someone identified by their alias")
-    //     .action((a, alias) => {
-    //         if (!_p) {
-    //             print("peerjs is not initialized");
-    //             return;
-    //         }
-    //         gun.get("users")
-    //             .get(alias)
-    //             .get("peerId")
-    //             .once((peerId, key) => {
-    //                 if (peerId) {
-    //                     print("calling " + alias + " at " + peerId + "...");
-    //                     navigator.mediaDevices
-    //                         .getUserMedia({ video: false, audio: true })
-    //                         .then((stream) => {
-    //                             call = _p.call(peerId, stream);
-    //                             call.on("stream", function (stream) {
-    //                                 addStream(call.peer, stream);
-    //                             });
-    //                         })
-    //                         .catch((err) => {
-    //                             print(err);
-    //                         });
-    //                 }
-    //             });
-    //     });
 
     function parse(input) {
         // console.log(input);

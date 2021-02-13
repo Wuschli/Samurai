@@ -53,7 +53,7 @@ function initPeerjs(id) {
 
     gun.user().once(function (user) {
         localAlias.set(user.alias);
-        gun.get('users').get(user.alias).get('peerId').put(id);
+        gun.get('users').get(user.alias.toLowerCase()).get("peerId").put(id);
     });
 
     p.on('connection', function (conn) {
