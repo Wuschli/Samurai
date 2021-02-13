@@ -4,7 +4,7 @@ class Call {
         this._peerjs = peerjs;
         this.Stream = null;
 
-        this.remoteId = remoteId;
+        this.RemoteId = remoteId;
         this._audio = null;
         this._mediaConnection = null;
         this._dataConnection = null;
@@ -44,9 +44,10 @@ class Call {
 
     async Initiate() {
         try {
+            console.log("initiate call to", this.RemoteId);
             this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
-            this.DataConnection = this._peerjs.connect(this._remoteId);
-            this.MediaConnection = this._peerjs.call(this._remoteId, this.Stream);
+            this.DataConnection = this._peerjs.connect(this.RemoteId);
+            this.MediaConnection = this._peerjs.call(this.RemoteId, this.Stream);
         }
         catch (err) {
             throw (err);
@@ -55,6 +56,7 @@ class Call {
 
     async Answer(mediaConnection) {
         try {
+            console.log("accept call from", this.RemoteId);
             this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
             this.MediaConnection = mediaConnection;
             mediaConnection.answer(this.Stream);
@@ -71,7 +73,7 @@ class Call {
     }
 
     _registerMediaConnectionCallbacks(conn) {
-        console.log('register media connection callbacks', this.remoteId, conn);
+        console.log('register media connection callbacks', this.RemoteId, conn);
 
         conn.on("stream", function (stream) {
             this.out(conn.peer + ' connected');
@@ -91,7 +93,7 @@ class Call {
     }
 
     _registerDataConnectionCallbacks(conn) {
-        console.log('register data connection callbacks', this.remoteId, conn);
+        console.log('register data connection callbacks', this.RemoteId, conn);
 
         conn.on("data", function (data) {
             console.log("received data from", conn.peer, data);

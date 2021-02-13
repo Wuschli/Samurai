@@ -3,5 +3,5 @@
     export let call;
 </script>
 
-<p>{call.remoteId}</p>
+<p>{call.RemoteId}</p>
 <VolumeBar context={call.AudioContext} stream={call.Stream} />
