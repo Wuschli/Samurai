@@ -103,16 +103,22 @@ class VoiceChat {
         incomingCalls.push(c);
     }
 
-    _handleCall(call) {
-        console.log('handle call', call);
-        call.on("stream", function (stream) {
-            this.out(call.peer + ' connected');
-            this._addCall(call, stream);
+    _handleCall(mediaConnection) {
+        console.log('handle call', mediaConnection);
+        
+        mediaConnection.on("stream", function (stream) {
+            this.out(mediaConnection.peer + ' connected');
+            this._addCall(mediaConnection, stream);
         }.bind(this));
 
-        call.on("close", function () {
-            this.out(call.peer + ' left the call');
-            this._removeCall(call);
+        mediaConnection.on("close", function () {
+            this.out(mediaConnection.peer + ' left the call');
+            this._removeCall(mediaConnection);
+        }.bind(this));
+
+        mediaConnection.on("error", function (err) {
+            this.out(mediaConnection.peer + ' reported an error: ' + err);
+            this._removeCall(mediaConnection);
         }.bind(this));
     }
 }
