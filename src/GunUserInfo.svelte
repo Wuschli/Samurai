@@ -26,8 +26,15 @@
 
     let audioContext;
     let micStream;
-    let volumeValue;
-    onMount(async () => {
+    let micPromise;
+
+    $: {
+        if ($calls.length != 0) {
+            micPromise = getMicStream();
+        }
+    }
+
+    async function getMicStream() {
         try {
             audioContext = new AudioContext();
             micStream = await navigator.mediaDevices.getUserMedia({
@@ -38,10 +45,11 @@
                     autoGainControl: { ideal: true },
                 },
             });
+            audioContext.resume();
         } catch (err) {
             console.error(err);
         }
-    });
+    }
 </script>
 
 <Page>
@@ -49,6 +57,11 @@
         {#if $localAlias}
             <div class="frame">
                 <p>{displayName}</p>
+                {#if $calls.length > 0 || $incomingCalls.length > 0}
+                    {#await micPromise then _}
+                        <VolumeBar context={audioContext} stream={micStream} />
+                    {/await}
+                {/if}
                 <p>PeerId: {peerId}</p>
             </div>
         {/if}
@@ -62,7 +75,6 @@
             </div>
             <div class="calls frame">
                 <p>Active calls</p>
-                <VolumeBar context={audioContext} stream={micStream} />
                 {#each $calls as call}
                     <ActiveCall {call} />
                 {/each}
