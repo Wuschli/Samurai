@@ -9,23 +9,29 @@
     let soundMeter;
     let meterRefresh;
 
-    onMount(() => {
-        soundMeter = new SoundMeter(context);
-        soundMeter.connectToSource(stream, function (e) {
-            if (e) {
-                console.error(e);
-                return;
-            }
-            meterRefresh = setInterval(() => {
-                value = soundMeter.instant.toFixed(2) * 100;
-                // console.log(value);
-            }, 50);
-        });
-    });
-    onDestroy(() => {
-        soundMeter.stop();
-        clearInterval(meterRefresh);
-    });
+    $: {
+        if (soundMeter) {
+            soundMeter.stop();
+            soundMeter = null;
+        }
+        if (meterRefresh) {
+            clearInterval(meterRefresh);
+            meterRefresh = null;
+        }
+        if (stream) {
+            soundMeter = new SoundMeter(context);
+            soundMeter.connectToSource(stream, function (e) {
+                if (e) {
+                    console.error(e);
+                    return;
+                }
+                meterRefresh = setInterval(() => {
+                    value = soundMeter.instant.toFixed(2) * 100;
+                    // console.log(value);
+                }, 50);
+            });
+        }
+    }
 </script>
 
 <div class="volume-bar">
