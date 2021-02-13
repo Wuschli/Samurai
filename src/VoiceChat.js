@@ -19,8 +19,8 @@ class VoiceChat {
         this._audioContext = new AudioContext();
     }
 
-    _addCall(call, stream, peerId) {
-        console.log('add call ', peerId);
+    _addCall(call, stream) {
+        console.log('add call ', call.peer);
         let a = new Audio();
         a.muted = true;
         a.srcObject = stream;
@@ -33,8 +33,6 @@ class VoiceChat {
         source.connect(analyser);
         analyser.connect(this._audioContext.destination);
 
-        console.log(source);
-
         calls.push({
             peer: call.peer,
             source: source,
@@ -42,21 +40,16 @@ class VoiceChat {
             call: call,
             audio: a,
         });
-        // console.log(streams);
     }
 
     _removeCall(call) {
-        console.log("remove call", call, calls);
-        var i = 0;
-        while (i < this._calls.length) {
-            if (this._calls[i].peer == call.peer) {
-                this._calls[i].audio?.remove();
-                this._calls.splice(i, 1);
-            } else {
-                ++i;
+        console.log("remove call", call.peer);
+        calls.removeIf((c, i) => {
+            if (c.peer == call.peer) {
+                console.log('remove', c.peer);
+                c.audio?.remove();
             }
-        }
-        this._calls = this._calls;
+        });
     }
 
     async CallPeer(peer) {
@@ -68,17 +61,8 @@ class VoiceChat {
             this.out("calling " + peer + "...");
             try {
                 var stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-
                 let call = this._p.call(peer, stream);
-                call.on("stream", function (s) {
-                    this.out(peer + ' answered the call');
-                    this._addCall(call, s, peer);
-                }.bind(this));
-
-                call.on("close", function () {
-                    this.out(peer + ' left the call');
-                    this._removeCall(call);
-                }.bind(this));
+                this._handleCall(call);
             }
             catch (err) {
                 this.out(err);
@@ -88,7 +72,6 @@ class VoiceChat {
 
     HangupCall() {
         for (const call of calls) {
-            console.log(call);
             call.call.close();
         }
         calls.set([]);
@@ -102,13 +85,9 @@ class VoiceChat {
             let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
 
             for (const call of incomingCalls) {
+                this.out('answer call from ' + call.peer);
+                this._handleCall(call);
                 call.answer(stream);
-                call.on("stream", function (s) {
-                    this._addCall(call, s);
-                }.bind(this));
-                call.on("close", function () {
-                    this._removeCall(call);
-                }.bind(this));
             }
             incomingCalls.set([]);
             this.out("✔");
@@ -122,6 +101,19 @@ class VoiceChat {
         // console.log(c);
         this.out("incoming call from " + c.peer);
         incomingCalls.push(c);
+    }
+
+    _handleCall(call) {
+        console.log('handle call', call);
+        call.on("stream", function (stream) {
+            this.out(call.peer + ' connected');
+            this._addCall(call, stream);
+        }.bind(this));
+
+        call.on("close", function () {
+            this.out(call.peer + ' left the call');
+            this._removeCall(call);
+        }.bind(this));
     }
 }
 

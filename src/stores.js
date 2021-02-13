@@ -1,5 +1,14 @@
 import { writable } from 'svelte/store';
 
+Array.prototype.removeIf = function(callback) {
+    var i = this.length;
+    while (i--) {
+        if (callback(this[i], i)) {
+            this.splice(i, 1);
+        }
+    }
+};
+
 export function array(value = []) {
     const store = writable(value);
 
@@ -23,7 +32,9 @@ export function array(value = []) {
         reverse: wrap('reverse'),
         slice: wrap('slice'),
         splice: wrap('splice'),
+        length: wrap('length'),
+        removeIf: wrap('removeIf')
     };
-    result[Symbol.iterator] = value[Symbol.iterator];
+    result[Symbol.iterator] = wrap(Symbol.iterator);
     return result;
 }
