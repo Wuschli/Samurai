@@ -18,7 +18,7 @@
         const user = gun.get("users/" + alias.toLowerCase());
         displayName = alias;
         user.get("peerId").on((data, key) => {
-            console.log(key, data);
+            // console.log(key, data);
             peerId = data;
         });
     }
@@ -37,13 +37,13 @@
             <div class="calls frame">
                 <p>Incoming calls</p>
                 {#each $incomingCalls as call}
-                    <p>{call.peer}</p>
+                    <p>{call.remoteId}</p>
                 {/each}
             </div>
             <div class="calls frame">
                 <p>Active calls</p>
                 {#each $calls as call}
-                    <p>{call.peer}</p>
+                    <p>{call.remoteId}</p>
                 {/each}
             </div>
         {/if}
