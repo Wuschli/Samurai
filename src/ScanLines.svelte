@@ -11,13 +11,17 @@
         z-index: 5;
         width: 100%;
         height: 100%;
+        opacity: 0.28;
         background: repeating-linear-gradient(
-            #ffffff00 0px,
-            #ffffff08 $scanlineHeight - 1px - $scanlineThickness,
-            #0000000f $scanlineHeight - $scanlineThickness,
-            #00000020 $scanlineHeight
+            #223 25%,
+            #450 25%,
+            #410 50%,
+            #230 50%,
+            #210 75%,
+            #200 75%,
+            #190
         );
-        background-size: 400% 400%;
+        background-size: 6px 6px;
         animation: scanlines-keys 100s linear infinite;
     }
     @keyframes scanlines-keys {
