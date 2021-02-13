@@ -9,6 +9,14 @@ class Call {
         this._mediaConnection = null;
         this._dataConnection = null;
 
+        this._mediaTrackConstraints = {
+            video: false,
+            audio: {
+                echoCancellation: { exact: true },
+                noiseSuppression: { exact: true },
+                autoGainControl: { ideal: true }
+            }
+        }
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         this._audioContext = new AudioContext();
@@ -36,7 +44,7 @@ class Call {
 
     async Initiate() {
         try {
-            this._stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            this._stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
             this.DataConnection = this._peerjs.connect(this._remoteId);
             this.MediaConnection = this._peerjs.call(this._remoteId, this._stream);
         }
@@ -47,18 +55,18 @@ class Call {
 
     async Answer(mediaConnection) {
         try {
-            this._stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            this._stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
             this.MediaConnection = mediaConnection;
-            mediaConnection.answer(stream);
+            mediaConnection.answer(this._stream);
         }
         catch (err) {
             throw (err);
         }
     }
 
-    Hangup() {
-        this.DataConnection.send({ close: true });
-        this.MediaConnection.close();
+    HangUp() {
+        this.DataConnection?.send({ close: true });
+        this.MediaConnection?.close();
     }
 
     _registerMediaConnectionCallbacks(conn) {
@@ -95,7 +103,7 @@ class Call {
         this.audio.muted = true;
         this.audio.srcObject = stream;
         this.audio.addEventListener("canplaythrough", () => {
-            a = null;
+            this.audio = null;
         });
         var source = this._audioContext.createMediaStreamSource(stream);
         const analyser = this._audioContext.createAnalyser();
@@ -118,7 +126,6 @@ export function StartCall(peerjs, remoteId, out) {
 
 export async function AcceptCall(peerjs, mediaConnection, out) {
     try {
-        this.out('answer call from ' + call.peer);
         var call = new Call(peerjs, mediaConnection.peer, out);
         await call.Answer(mediaConnection);
         return call;

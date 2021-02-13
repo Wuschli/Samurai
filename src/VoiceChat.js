@@ -67,7 +67,8 @@ class VoiceChat {
 
     HangupCall() {
         for (const call of calls) {
-            call.Hangup();
+            console.log(call);
+            call.HangUp();
         }
         calls.set([]);
         this.out("✔");
@@ -78,7 +79,8 @@ class VoiceChat {
 
         try {
             for (const call of incomingCalls) {
-                await calls.push(AcceptCall(this._p, call, this.out));
+                this.out('answer call from ' + call.peer);
+                await calls.push(await AcceptCall(this._p, call, this.out));
             }
             incomingCalls.set([]);
             this.out("✔");
