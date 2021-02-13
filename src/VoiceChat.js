@@ -2,7 +2,7 @@ import { peer } from "./initGun";
 import { array } from './stores';
 
 export const calls = array([]);
-export const unansweredCalls = array([]);
+export const incomingCalls = array([]);
 
 class VoiceChat {
 
@@ -19,7 +19,8 @@ class VoiceChat {
         this._audioContext = new AudioContext();
     }
 
-    AddCall(call, stream) {
+    _addCall(call, stream, peerId) {
+        console.log('add call ', peerId);
         let a = new Audio();
         a.muted = true;
         a.srcObject = stream;
@@ -44,7 +45,7 @@ class VoiceChat {
         // console.log(streams);
     }
 
-    RemoveCall(call) {
+    _removeCall(call) {
         console.log("remove call", call, calls);
         var i = 0;
         while (i < this._calls.length) {
@@ -70,11 +71,13 @@ class VoiceChat {
 
                 let call = this._p.call(peer, stream);
                 call.on("stream", function (s) {
-                    this.AddCall(call, s);
+                    this.out(peer + ' answered the call');
+                    this._addCall(call, s, peer);
                 }.bind(this));
 
                 call.on("close", function () {
-                    this.RemoveCall(call);
+                    this.out(peer + ' left the call');
+                    this._removeCall(call);
                 }.bind(this));
             }
             catch (err) {
@@ -93,21 +96,21 @@ class VoiceChat {
     }
 
     async AnswerCall() {
-        if (unansweredCalls.length == 0) return;
+        if (incomingCalls.length == 0) return;
 
         try {
             let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
 
-            for (const call of unansweredCalls) {
+            for (const call of incomingCalls) {
                 call.answer(stream);
                 call.on("stream", function (s) {
-                    this.AddCall(call, s);
+                    this._addCall(call, s);
                 }.bind(this));
                 call.on("close", function () {
-                    this.RemoveCall(call);
+                    this._removeCall(call);
                 }.bind(this));
             }
-            unansweredCalls.set([]);
+            incomingCalls.set([]);
             this.out("✔");
         }
         catch (err) {
@@ -118,7 +121,7 @@ class VoiceChat {
     _incomingCall(c) {
         // console.log(c);
         this.out("incoming call from " + c.peer);
-        unansweredCalls.push(c);
+        incomingCalls.push(c);
     }
 }
 

@@ -2,7 +2,7 @@
     import Autoscroll from "./Autoscroll.svelte";
     import Page from "./Page.svelte";
     import bot from "bot-commander";
-    import { voice, calls, unansweredCalls } from "./VoiceChat";
+    import { voice } from "./VoiceChat";
 
     let input;
     let output = [];
@@ -114,25 +114,6 @@
         </form>
     </div>
 </Page>
-
-{#if $calls.length > 0 || $unansweredCalls.length > 0}
-    <Page>
-        <div class="container frame">
-            <div class="calls frame">
-                <p>Unanswered calls</p>
-                {#each $unansweredCalls as call}
-                    <p>{call.peer}</p>
-                {/each}
-            </div>
-            <div class="calls frame">
-                <p>Active calls</p>
-                {#each $calls as call}
-                    <p>{call.peer}</p>
-                {/each}
-            </div>
-        </div>
-    </Page>
-{/if}
 
 <style lang="scss">
     .container {

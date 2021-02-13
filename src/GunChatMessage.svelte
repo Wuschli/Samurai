@@ -1,5 +1,6 @@
 <script>
     import { gun, peer } from "./initGun";
+    import { voice } from "./VoiceChat";
     export let message;
     let author;
     let peerId;
@@ -17,16 +18,7 @@
 
     function connect(peerId) {
         if (!peerId) return;
-        const conn = peer.connect(peerId);
-        conn.on("open", function () {
-            // Receive messages
-            conn.on("data", function (data) {
-                console.log("Received", data);
-            });
-
-            // Send messages
-            conn.send("Hello!");
-        });
+        voice.CallPeer(peerId);
     }
 </script>
 

@@ -1,6 +1,7 @@
 <script>
     import Page from "./Page.svelte";
     import { gun, localAlias } from "./initGun";
+    import { calls, incomingCalls } from "./VoiceChat";
 
     // export let alias;
 
@@ -23,22 +24,39 @@
     }
 </script>
 
-{#if $localAlias}
-    <Page>
+<Page>
+    {#if $localAlias}
         <div class="container frame">
             <div class="frame">
                 <p>{displayName}</p>
                 <p>PeerId: {peerId}</p>
             </div>
         </div>
-    </Page>
-{/if}
+    {/if}
+
+    {#if $calls.length > 0 || $incomingCalls.length > 0}
+        <div class="container frame">
+            <div class="calls frame">
+                <p>Incoming calls</p>
+                {#each $incomingCalls as call}
+                    <p>{call.peer}</p>
+                {/each}
+            </div>
+            <div class="calls frame">
+                <p>Active calls</p>
+                {#each $calls as call}
+                    <p>{call.peer}</p>
+                {/each}
+            </div>
+        </div>
+    {/if}
+</Page>
 
 <style lang="scss">
     .container {
         flex: 1;
         border: none;
-        height: 100%;
+        // height: 100%;
         > div {
             padding: 1em;
             flex: 0 1 auto;
