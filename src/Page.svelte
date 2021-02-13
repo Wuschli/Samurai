@@ -13,6 +13,7 @@
         // justify-content: space-between;
         height: 100%;
         scroll-snap-align: start;
+        scroll-snap-stop: always;
     }
 
     @media (min-width: 720px) {
