@@ -5,6 +5,29 @@ import { StartCall, AcceptCall } from './Call';
 export const calls = array([]);
 export const incomingCalls = array([]);
 
+
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+export const audioContext = new AudioContext();
+let micStream;
+
+export async function getMicStream() {
+    if (micStream) return micStream;
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: {
+                echoCancellation: { exact: true },
+                noiseSuppression: { exact: true },
+                autoGainControl: { ideal: true },
+            },
+        });
+        audioContext.resume();
+    } catch (err) {
+        console.error(err);
+    }
+    return micStream;
+}
+
 class VoiceChat {
 
     out = function () { };
