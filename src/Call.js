@@ -2,7 +2,7 @@ class Call {
     constructor(peerjs, remoteId, out) {
         this.out = out || function () { };
         this._peerjs = peerjs;
-        this._stream = null;
+        this.Stream = null;
 
         this.remoteId = remoteId;
         this._audio = null;
@@ -19,7 +19,7 @@ class Call {
         }
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        this._audioContext = new AudioContext();
+        this.AudioContext = new AudioContext();
 
         peerjs.on('connection', function (conn) {
             console.log(conn);
@@ -44,9 +44,9 @@ class Call {
 
     async Initiate() {
         try {
-            this._stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
+            this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
             this.DataConnection = this._peerjs.connect(this._remoteId);
-            this.MediaConnection = this._peerjs.call(this._remoteId, this._stream);
+            this.MediaConnection = this._peerjs.call(this._remoteId, this.Stream);
         }
         catch (err) {
             throw (err);
@@ -55,9 +55,9 @@ class Call {
 
     async Answer(mediaConnection) {
         try {
-            this._stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
+            this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
             this.MediaConnection = mediaConnection;
-            mediaConnection.answer(this._stream);
+            mediaConnection.answer(this.Stream);
         }
         catch (err) {
             throw (err);
@@ -67,6 +67,7 @@ class Call {
     HangUp() {
         this.DataConnection?.send({ close: true });
         this.MediaConnection?.close();
+        this.Stream.getTracks().forEach(track => track.stop());
     }
 
     _registerMediaConnectionCallbacks(conn) {
@@ -105,11 +106,11 @@ class Call {
         this.audio.addEventListener("canplaythrough", () => {
             this.audio = null;
         });
-        var source = this._audioContext.createMediaStreamSource(stream);
-        const analyser = this._audioContext.createAnalyser();
+        var source = this.AudioContext.createMediaStreamSource(stream);
+        const analyser = this.AudioContext.createAnalyser();
 
         source.connect(analyser);
-        analyser.connect(this._audioContext.destination);
+        analyser.connect(this.AudioContext.destination);
     }
 }
 
