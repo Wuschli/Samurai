@@ -11,7 +11,7 @@
         z-index: 5;
         width: 100%;
         height: 100%;
-        opacity: 0.28;
+        opacity: 0.2;
         background: repeating-linear-gradient(
             #223 25%,
             #450 25%,
