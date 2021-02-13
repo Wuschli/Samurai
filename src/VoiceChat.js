@@ -5,6 +5,34 @@ import { StartCall, AcceptCall } from './Call';
 export const calls = array([]);
 export const incomingCalls = array([]);
 
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioContext;
+
+export function getAudioContext() {
+    if (audioContext) return audioContext;
+    audioContext = new AudioContext();
+    audioContext.resume();
+}
+
+let micStream;
+export async function getMicStream() {
+    if (micStream) return micStream;
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: {
+                echoCancellation: { exact: true },
+                noiseSuppression: { exact: true },
+                autoGainControl: { ideal: true },
+            },
+        });
+        getAudioContext();
+    } catch (err) {
+        console.error(err);
+    }
+    return micStream;
+}
+
 class VoiceChat {
 
     out = function () { };
@@ -43,6 +71,7 @@ class VoiceChat {
                 calls.push(call);
             }
             catch (err) {
+                console.error(err);
                 this.out(err);
             }
         }
@@ -86,6 +115,7 @@ class VoiceChat {
             this.out("✔");
         }
         catch (err) {
+            console.error(err);
             this.out(err);
         }
     }

@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { gun, localAlias } from "./initGun";
-    import { calls, incomingCalls } from "./VoiceChat";
+    import { calls, incomingCalls, getMicStream } from "./VoiceChat";
     import Page from "./Page.svelte";
     import ActiveCall from "./ActiveCall.svelte";
     import VolumeBar from "./VolumeBar.svelte";
@@ -24,30 +24,12 @@
         });
     }
 
-    let audioContext;
     let micStream;
     let micPromise;
 
     $: {
         if ($calls.length != 0) {
             micPromise = getMicStream();
-        }
-    }
-
-    async function getMicStream() {
-        try {
-            audioContext = new AudioContext();
-            micStream = await navigator.mediaDevices.getUserMedia({
-                video: false,
-                audio: {
-                    echoCancellation: { exact: true },
-                    noiseSuppression: { exact: true },
-                    autoGainControl: { ideal: true },
-                },
-            });
-            audioContext.resume();
-        } catch (err) {
-            console.error(err);
         }
     }
 </script>
@@ -58,8 +40,8 @@
             <div class="frame">
                 <p>{displayName}</p>
                 {#if $calls.length > 0 || $incomingCalls.length > 0}
-                    {#await micPromise then _}
-                        <VolumeBar context={audioContext} stream={micStream} />
+                    {#await micPromise then stream}
+                        <VolumeBar {stream} />
                     {/await}
                 {/if}
                 <p>PeerId: {peerId}</p>

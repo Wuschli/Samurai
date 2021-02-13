@@ -1,3 +1,5 @@
+import { getMicStream, getAudioContext } from './VoiceChat';
+
 class Call {
     constructor(peerjs, remoteId, out) {
         this.out = out || function () { };
@@ -8,18 +10,6 @@ class Call {
         this._audio = null;
         this._mediaConnection = null;
         this._dataConnection = null;
-
-        this._mediaTrackConstraints = {
-            video: false,
-            audio: {
-                echoCancellation: { exact: true },
-                noiseSuppression: { exact: true },
-                autoGainControl: { ideal: true }
-            }
-        }
-
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.AudioContext = new AudioContext();
 
         peerjs.on('connection', function (conn) {
             console.log(conn);
@@ -45,7 +35,7 @@ class Call {
     async Initiate() {
         try {
             console.log("initiate call to", this.RemoteId);
-            this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
+            this.Stream = await getMicStream();
             this.DataConnection = this._peerjs.connect(this.RemoteId);
             this.MediaConnection = this._peerjs.call(this.RemoteId, this.Stream);
         }
@@ -57,7 +47,7 @@ class Call {
     async Answer(mediaConnection) {
         try {
             console.log("accept call from", this.RemoteId);
-            this.Stream = await navigator.mediaDevices.getUserMedia(this._mediaTrackConstraints);
+            this.Stream = await getMicStream();
             this.MediaConnection = mediaConnection;
             mediaConnection.answer(this.Stream);
         }
@@ -108,11 +98,11 @@ class Call {
         this.audio.addEventListener("canplaythrough", () => {
             this.audio = null;
         });
-        var source = this.AudioContext.createMediaStreamSource(stream);
-        const analyser = this.AudioContext.createAnalyser();
+        var source = getAudioContext().createMediaStreamSource(stream);
+        const analyser = getAudioContext().createAnalyser();
 
         source.connect(analyser);
-        analyser.connect(this.AudioContext.destination);
+        analyser.connect(getAudioContext().destination);
     }
 }
 
