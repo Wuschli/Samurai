@@ -28,30 +28,7 @@
     bot.setSend((meta, message) => print(message));
     bot.command("call <peer>")
         .description("Call someone identified by their peer")
-        .action((a, peer) => {
-            if (!_p) {
-                print("peerjs is not initialized");
-                return;
-            }
-            if (peer) {
-                print("calling " + peer + "...");
-                navigator.mediaDevices
-                    .getUserMedia({ video: false, audio: true })
-                    .then((stream) => {
-                        // addStream(_p.id, stream);
-                        let call = _p.call(peer, stream);
-                        call.on("stream", function (s) {
-                            addCall(call, s);
-                        });
-                        call.on("close", () => {
-                            removeCall(call);
-                        });
-                    })
-                    .catch((err) => {
-                        print(err);
-                    });
-            }
-        });
+        .action(callPeer);
     // bot.command("call alias <alias>")
     //     .description("Call someone identified by their alias")
     //     .action((a, alias) => {
@@ -79,36 +56,9 @@
     //                 }
     //             });
     //     });
-    bot.command("hangup").action((a) => {
-        for (const call of calls) {
-            console.log(call);
-            call.call.close();
-        }
-        calls = [];
-        print("✔");
-    });
+    bot.command("hangup").action(hangupCall);
 
-    bot.command("answer").action(() => {
-        if (unansweredCalls.length == 0) return;
-        navigator.mediaDevices
-            .getUserMedia({ video: false, audio: true })
-            .then((stream) => {
-                for (const call of unansweredCalls) {
-                    call.answer(stream);
-                    call.on("stream", function (s) {
-                        addCall(call, s);
-                    });
-                    call.on("close", () => {
-                        removeCall(call);
-                    });
-                }
-                unansweredCalls = [];
-                print("✔");
-            })
-            .catch((err) => {
-                print(err);
-            });
-    });
+    bot.command("answer").action(answerCall);
 
     function addCall(call, stream) {
         let a = new Audio();
@@ -149,6 +99,62 @@
             }
         }
         calls = calls;
+    }
+
+    function callPeer(a, peer) {
+        if (!_p) {
+            print("peerjs is not initialized");
+            return;
+        }
+        if (peer) {
+            print("calling " + peer + "...");
+            navigator.mediaDevices
+                .getUserMedia({ video: false, audio: true })
+                .then((stream) => {
+                    // addStream(_p.id, stream);
+                    let call = _p.call(peer, stream);
+                    call.on("stream", function (s) {
+                        addCall(call, s);
+                    });
+                    call.on("close", () => {
+                        removeCall(call);
+                    });
+                })
+                .catch((err) => {
+                    print(err);
+                });
+        }
+    }
+
+    function hangupCall() {
+        for (const call of calls) {
+            console.log(call);
+            call.call.close();
+        }
+        calls = [];
+        print("✔");
+    }
+
+    function answerCall() {
+        if (unansweredCalls.length == 0) return;
+        navigator.mediaDevices
+            .getUserMedia({ video: false, audio: true })
+            .then((stream) => {
+                for (const call of unansweredCalls) {
+                    call.answer(stream);
+                    call.on("stream", function (s) {
+                        addCall(call, s);
+                    });
+                    call.on("close", () => {
+                        removeCall(call);
+                    });
+                }
+                unansweredCalls = [];
+                print("✔");
+            })
+            .catch((err) => {
+                print(err);
+            });
     }
 
     function parse(input) {
