@@ -5,6 +5,7 @@ class Call {
         this.out = out || function () { };
         this._peerjs = peerjs;
         this.Stream = null;
+        this.RemoteStream = null;
 
         this.RemoteId = remoteId;
         this._audio = null;
@@ -49,7 +50,8 @@ class Call {
             console.log("accept call from", this.RemoteId);
             this.Stream = await getMicStream();
             this.MediaConnection = mediaConnection;
-            mediaConnection.answer(this.Stream);
+            mediaConnection.answer(null);
+            // mediaConnection.answer(this.Stream);
         }
         catch (err) {
             throw (err);
@@ -65,9 +67,9 @@ class Call {
     _registerMediaConnectionCallbacks(conn) {
         console.log('register media connection callbacks', this.RemoteId, conn);
 
-        conn.on("stream", function (stream) {
+        conn.on("stream", function (s) {
             this.out(conn.peer + ' connected');
-            this._setupAudio(conn, stream);
+            this._setupAudio(conn, s);
         }.bind(this));
 
         conn.on("close", function () {
@@ -92,17 +94,16 @@ class Call {
 
     _setupAudio(connection, stream) {
         console.log('add call ', connection.peer);
+        const s = connection.remoteStream;
+        this.RemoteStream = s;
         this.audio = new Audio();
         this.audio.muted = true;
-        this.audio.srcObject = stream;
+        this.audio.srcObject = s;
         this.audio.addEventListener("canplaythrough", () => {
             this.audio = null;
         });
-        var source = getAudioContext().createMediaStreamSource(stream);
-        const analyser = getAudioContext().createAnalyser();
-
-        source.connect(analyser);
-        analyser.connect(getAudioContext().destination);
+        var source = getAudioContext().createMediaStreamSource(s);
+        source.connect(getAudioContext().destination);
     }
 }
 

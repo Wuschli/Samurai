@@ -4,4 +4,4 @@
 </script>
 
 <p>{call.RemoteId}</p>
-<VolumeBar stream={call.Stream} />
+<VolumeBar stream={call.RemoteStream} />
