@@ -38,7 +38,7 @@ export default class SoundMeter {
   }
 
   connectToSource(stream, callback) {
-    console.log('SoundMeter connecting');
+    console.log('SoundMeter connecting', stream);
     try {
       this.mic = this.context.createMediaStreamSource(stream);
       this.mic.connect(this.script);

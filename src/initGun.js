@@ -43,7 +43,9 @@ export const gun = Gun(opt);
 gun.on('auth', function (ack) {
     console.log('Authentication was successful'/*, ack*/);
 
-    p = new Peer();
+    p = new Peer(null, {
+        debug: 2
+    });
     p.on('open', initPeerjs);
     peer.set(p);
 });

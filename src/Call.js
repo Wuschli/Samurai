@@ -1,11 +1,12 @@
 import { getMicStream, getAudioContext } from './VoiceChat';
+import { writable } from 'svelte/store';
 
 class Call {
     constructor(peerjs, remoteId, out) {
         this.out = out || function () { };
         this._peerjs = peerjs;
         this.Stream = null;
-        this.RemoteStream = null;
+        this.RemoteStream = new writable();
 
         this.RemoteId = remoteId;
         this._audio = null;
@@ -50,8 +51,7 @@ class Call {
             console.log("accept call from", this.RemoteId);
             this.Stream = await getMicStream();
             this.MediaConnection = mediaConnection;
-            mediaConnection.answer(null);
-            // mediaConnection.answer(this.Stream);
+            mediaConnection.aanswer(this.Stream);
         }
         catch (err) {
             throw (err);
@@ -95,7 +95,7 @@ class Call {
     _setupAudio(connection, stream) {
         console.log('add call ', connection.peer);
         const s = connection.remoteStream;
-        this.RemoteStream = s;
+        this.RemoteStream.set(s);
         this.audio = new Audio();
         this.audio.muted = true;
         this.audio.srcObject = s;

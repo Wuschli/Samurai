@@ -30,6 +30,9 @@
                 }, 50);
             });
         }
+        else{
+            console.log("no stream");
+        }
     }
 </script>
 
