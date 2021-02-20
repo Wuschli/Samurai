@@ -1,5 +1,6 @@
 import { getMicStream, getAudioContext } from './VoiceChat';
 import { writable } from 'svelte/store';
+import { voice } from './VoiceChat';
 
 class Call {
     constructor(peerjs, remoteId, out) {
@@ -74,12 +75,12 @@ class Call {
 
         conn.on("close", function () {
             this.out(conn.peer + ' left the call');
-            this._removeCall(conn);
+            voice._removeCall(this);
         }.bind(this));
 
         conn.on("error", function (err) {
             this.out(conn.peer + ' reported an error: ' + err);
-            this._removeCall(conn);
+            voice._removeCall(this);
         }.bind(this));
 
     }
