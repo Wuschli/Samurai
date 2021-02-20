@@ -51,7 +51,7 @@ class Call {
             console.log("accept call from", this.RemoteId);
             this.Stream = await getMicStream();
             this.MediaConnection = mediaConnection;
-            mediaConnection.aanswer(this.Stream);
+            mediaConnection.answer(this.Stream);
         }
         catch (err) {
             throw (err);
