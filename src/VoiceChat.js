@@ -50,10 +50,9 @@ class VoiceChat {
     }
 
     _removeCall(call) {
-        console.log("remove call", call.peer);
+        console.log("remove call", call);
         calls.removeIf((c, i) => {
             if (c.peer == call.peer) {
-                console.log('remove', c.peer);
                 c.audio?.remove();
             }
         });

@@ -1,10 +1,13 @@
 import { getMicStream, getAudioContext } from './VoiceChat';
+import { writable } from 'svelte/store';
+import { voice } from './VoiceChat';
 
 class Call {
     constructor(peerjs, remoteId, out) {
         this.out = out || function () { };
         this._peerjs = peerjs;
         this.Stream = null;
+        this.RemoteStream = new writable();
 
         this.RemoteId = remoteId;
         this._audio = null;
@@ -65,19 +68,19 @@ class Call {
     _registerMediaConnectionCallbacks(conn) {
         console.log('register media connection callbacks', this.RemoteId, conn);
 
-        conn.on("stream", function (stream) {
+        conn.on("stream", function (s) {
             this.out(conn.peer + ' connected');
-            this._setupAudio(conn, stream);
+            this._setupAudio(conn, s);
         }.bind(this));
 
         conn.on("close", function () {
             this.out(conn.peer + ' left the call');
-            this._removeCall(conn);
+            voice._removeCall(this);
         }.bind(this));
 
         conn.on("error", function (err) {
             this.out(conn.peer + ' reported an error: ' + err);
-            this._removeCall(conn);
+            voice._removeCall(this);
         }.bind(this));
 
     }
@@ -92,17 +95,16 @@ class Call {
 
     _setupAudio(connection, stream) {
         console.log('add call ', connection.peer);
+        const s = connection.remoteStream;
+        this.RemoteStream.set(s);
         this.audio = new Audio();
         this.audio.muted = true;
-        this.audio.srcObject = stream;
+        this.audio.srcObject = s;
         this.audio.addEventListener("canplaythrough", () => {
             this.audio = null;
         });
-        var source = getAudioContext().createMediaStreamSource(stream);
-        const analyser = getAudioContext().createAnalyser();
-
-        source.connect(analyser);
-        analyser.connect(getAudioContext().destination);
+        var source = getAudioContext().createMediaStreamSource(s);
+        source.connect(getAudioContext().destination);
     }
 }
 
