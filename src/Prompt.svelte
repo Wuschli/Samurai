@@ -3,6 +3,7 @@
     import Page from "./Page.svelte";
     import bot from "bot-commander";
     import { voice } from "./VoiceChat";
+    import { dataConnectionManager } from "./DataConnectionManager";
 
     let input;
     let output = [];
@@ -10,6 +11,8 @@
     let historyIndex = -1;
 
     voice.out = print;
+    dataConnectionManager.out = print;
+
     bot.setSend((_, message) => print(message));
     bot.command("call <alias>")
         .description("Call someone identified by their alias")

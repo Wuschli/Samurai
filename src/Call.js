@@ -1,6 +1,7 @@
 import { getMicStream, getAudioContext } from './VoiceChat';
 import { writable } from 'svelte/store';
 import { voice } from './VoiceChat';
+import { dataConnectionManager } from './DataConnectionManager';
 
 class Call {
     constructor(peerjs, remoteId, out) {
@@ -13,10 +14,6 @@ class Call {
         this._audio = null;
         this._mediaConnection = null;
         this._dataConnection = null;
-
-        peerjs.on('connection', function (conn) {
-            console.log(conn);
-        }.bind(this));
     }
 
     get MediaConnection() {
@@ -32,14 +29,13 @@ class Call {
     }
     set DataConnection(conn) {
         this._dataConnection = conn;
-        this._registerDataConnectionCallbacks(conn);
     }
 
     async Initiate() {
         try {
             console.log("initiate call to", this.RemoteId);
             this.Stream = await getMicStream();
-            this.DataConnection = this._peerjs.connect(this.RemoteId);
+            this.DataConnection = await dataConnectionManager.Connect(this.RemoteId);
             this.MediaConnection = this._peerjs.call(this.RemoteId, this.Stream);
         }
         catch (err) {
@@ -60,7 +56,6 @@ class Call {
     }
 
     HangUp() {
-        this.DataConnection?.send({ close: true });
         this.MediaConnection?.close();
         this.Stream.getTracks().forEach(track => track.stop());
     }
@@ -83,14 +78,6 @@ class Call {
             voice._removeCall(this);
         }.bind(this));
 
-    }
-
-    _registerDataConnectionCallbacks(conn) {
-        console.log('register data connection callbacks', this.RemoteId, conn);
-
-        conn.on("data", function (data) {
-            console.log("received data from", conn.peer, data);
-        }.bind(this));
     }
 
     _setupAudio(connection, stream) {
