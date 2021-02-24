@@ -2,3 +2,5 @@
 /public/build/
 
 .DS_Store
+ejabberd_data
+ejabberd_logs

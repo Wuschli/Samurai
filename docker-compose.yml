@@ -1,0 +1,21 @@
+version: "3.9" # optional since v1.27.0
+services:
+  ejabberd:
+    image: ejabberd/ecs
+    ports:
+      - "5222:5222"
+      - "5280:5280"
+      - "5443:5443"
+    volumes:
+      - type: bind
+        source: ./ejabberd_data
+        target: /home/ejabberd/database
+      - type: bind
+        source: ./ejabberd_logs
+        target: /home/ejabberd/logs
+      - type: bind
+        source: ./ejabberd.yml
+        target: /home/ejabberd/conf/ejabberd.yml
+      - type: bind
+        source: ./ejabberd_upload
+        target: /home/ejabberd/upload
