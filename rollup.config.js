@@ -5,9 +5,10 @@ import json from '@rollup/plugin-json';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import preprocess from 'svelte-preprocess';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -51,6 +52,14 @@ export default {
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
 		css({ output: 'bundle.css' }),
+		replace({
+			delimiters: ['', ''],
+			values: {
+				'require(\'readable-stream/transform\')': 'require(\'stream\').Transform',
+				'require("readable-stream/transform")': 'require("stream").Transform',
+				'readable-stream': 'stream'
+			}
+		}),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
@@ -62,13 +71,13 @@ export default {
 			dedupe: ['svelte'],
 			preferBuiltins: false
 		}),
+		commonjs({
+			requireReturnsDefault: 'auto'
+		}),
 		nodePolyfills(),
 		nodeResolve({
 			browser: true,
-			preferBuiltins: false
-		}),
-		commonjs({
-			requireReturnsDefault: 'auto'
+			preferBuiltins: true
 		}),
 		json(),
 

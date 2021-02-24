@@ -4,6 +4,7 @@
     import bot from "bot-commander";
     import { voice } from "./VoiceChat";
     import { dataConnectionManager } from "./DataConnectionManager";
+    import { client } from "./initStanza";
 
     let input;
     let output = [];
